@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spell Shore - Delete data</title>
+<meta name="description" content="How to erase Spell Shore data.">
+<meta name="theme-color" content="#1f8fb0">
+<meta property="og:title" content="Spell Shore - Delete data">
+<meta property="og:description" content="How to erase Spell Shore data.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231f8fb0'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Arial,sans-serif' font-weight='900' font-size='30' fill='%23ffc62e'%3ESS%3C/text%3E%3C/svg%3E">
+<style>
+@font-face{font-family:"Poppins";font-style:normal;font-weight:400;font-display:swap;src:url(/fonts/poppins-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"Poppins";font-style:normal;font-weight:600;font-display:swap;src:url(/fonts/poppins-latin-600-normal.woff2) format("woff2")}
+@font-face{font-family:"Poppins";font-style:normal;font-weight:700;font-display:swap;src:url(/fonts/poppins-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:"Poppins";font-style:normal;font-weight:800;font-display:swap;src:url(/fonts/poppins-latin-800-normal.woff2) format("woff2")}
+@font-face{font-family:"Poppins";font-style:normal;font-weight:900;font-display:swap;src:url(/fonts/poppins-latin-900-normal.woff2) format("woff2")}
+:root{
+  --sea:#1f8fb0; --sea-2:#5cc6d8; --sand:#f6e3b4; --coral:#ff6a3d; --gold:#ffc62e;
+  --navy:#0d2a44; --leaf:#2fae62; --cream:#fffaf0; --muted:#4a6377; --line:rgba(13,42,68,.14);
+  --round:"Poppins",ui-rounded,"SF Pro Rounded","Arial Rounded MT Bold","Segoe UI",system-ui,-apple-system,Roboto,sans-serif;
+  --gutter:clamp(16px,5vw,48px); --max:1080px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{background:var(--cream);color:var(--navy);font-family:var(--round);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+a:focus-visible{outline:3px solid var(--coral);outline-offset:3px;border-radius:6px}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 var(--gutter)}
+.eyebrow{font-weight:700;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--sea)}
+
+.nav{position:absolute;top:0;left:0;right:0;z-index:10}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:72px}
+.brand{font-weight:800;font-size:22px;color:#fff;text-shadow:0 2px 0 rgba(13,42,68,.35);letter-spacing:.01em}
+.brand b{color:var(--gold)}
+.nav ul{list-style:none;display:flex;gap:22px}
+.nav a.link{font-weight:700;font-size:14px;color:rgba(255,255,255,.9)}
+.nav a.link:hover,.nav a.link[aria-current]{color:#fff;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:6px}
+@media (max-width:560px){.nav ul{gap:14px}.nav a.link{font-size:13px}.brand{font-size:19px}}
+
+/* sea hero */
+.sea{position:relative;overflow:hidden;isolation:isolate;color:#fff;
+  background:linear-gradient(180deg,#39b6d6 0%,#1f8fb0 55%,#16728f 100%)}
+.sea .sun{position:absolute;right:8vw;top:90px;width:clamp(70px,12vw,140px);aspect-ratio:1;border-radius:50%;z-index:-2;
+  background:radial-gradient(circle,#fff6c9 0 45%,#ffd95a 46% 70%,rgba(255,198,46,0) 71%)}
+.sea .isle{position:absolute;left:50%;bottom:-2px;transform:translateX(-50%);width:min(900px,140vw);height:120px;z-index:-1;
+  background:radial-gradient(60% 100% at 50% 100%,var(--sand) 0 60%,transparent 61%)}
+.sea .wave{position:absolute;left:0;right:0;bottom:0;height:34px;z-index:-1;opacity:.55;
+  background:radial-gradient(22px 12px at 22px 0,transparent 98%,#fffaf0 100%) 0 0/44px 34px repeat-x}
+.doc-head .isle{display:none}
+@media (max-width:560px){.sea .sun{width:56px;top:auto;bottom:62px;right:18px}}
+.hero{min-height:min(88vh,780px);display:flex;align-items:center;padding:120px 0 150px}
+.hero>.wrap{width:100%}
+.hero h1{font-weight:900;font-size:clamp(54px,12vw,128px);line-height:.95;letter-spacing:-.01em;text-shadow:0 5px 0 var(--navy)}
+.hero .tag{margin-top:18px;font-weight:800;font-size:clamp(20px,3vw,28px);color:var(--gold);text-shadow:0 2px 0 rgba(13,42,68,.5)}
+.hero .lede{margin-top:14px;max-width:44ch;font-size:clamp(16px,2vw,19px);color:#eafaff}
+.cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:999px;font-weight:800;font-size:15px;
+  background:#fff;color:var(--navy);border:3px solid var(--navy);box-shadow:0 4px 0 var(--navy);transition:transform .15s,box-shadow .15s}
+a.btn:hover{transform:translateY(2px);box-shadow:0 2px 0 var(--navy)}
+.btn.primary{background:var(--coral);color:#fff}
+.btn.muted{background:var(--sand)}
+.btn small{font-weight:700;opacity:.8}
+
+section.block{padding:clamp(64px,9vw,104px) 0}
+section.block.alt{background:#fff}
+.block h2{font-weight:900;font-size:clamp(30px,4.6vw,46px);line-height:1.1;margin:10px 0 18px;max-width:22ch}
+.block p.big{font-size:clamp(17px,2vw,20px);color:var(--muted);max-width:60ch}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:34px}
+.cardx{background:#fff;border:3px solid var(--navy);border-radius:22px;padding:22px 22px 24px;box-shadow:0 5px 0 var(--navy)}
+.block.alt .cardx{background:var(--cream)}
+.cardx .ico{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;border:3px solid var(--navy);margin-bottom:12px}
+.cardx h3{font-weight:800;font-size:21px;line-height:1.2;margin-bottom:6px}
+.cardx p{color:var(--muted);font-size:15.5px}
+@media (max-width:900px){.grid{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.grid{grid-template-columns:1fr}}
+.promise{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:26px}
+.promise div{background:var(--navy);color:#fff;border-radius:16px;padding:16px;font-weight:800;font-size:16px;text-align:center}
+.promise div span{display:block;font-size:26px;margin-bottom:4px}
+@media (max-width:700px){.promise{grid-template-columns:1fr 1fr}}
+
+/* doc pages */
+.doc-head{padding:112px 0 44px}
+.doc-head h1{font-weight:900;font-size:clamp(36px,6.4vw,60px);line-height:1.05;text-shadow:0 4px 0 var(--navy)}
+.doc-head .meta{margin-top:10px;color:#eafaff;font-size:14px;font-weight:600}
+.doc{padding:44px 0 90px}
+.doc .wrap{max-width:780px}
+.doc h2{font-weight:800;font-size:27px;margin:46px 0 12px;line-height:1.2}
+.doc h3{font-weight:800;font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--sea);margin:26px 0 8px}
+.doc p{margin:12px 0}
+.doc ul,.doc ol{margin:12px 0 12px 22px}
+.doc li{margin:8px 0}
+.doc a{color:#0b6f8c;font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.doc strong{font-weight:800}
+.doc .callout{margin:22px 0;padding:18px 20px;border:3px solid var(--navy);border-radius:18px;background:#fff;box-shadow:0 4px 0 var(--navy)}
+.doc .callout.gold{background:#fff3c4}
+.tablewrap{overflow-x:auto;margin:16px 0;border:3px solid var(--navy);border-radius:16px;background:#fff}
+table{border-collapse:collapse;width:100%;min-width:600px;font-size:14.5px}
+th,td{text-align:left;vertical-align:top;padding:12px 14px;border-bottom:1px solid var(--line)}
+th{font-weight:800;font-size:12px;letter-spacing:.1em;text-transform:uppercase;background:var(--sand)}
+tr:last-child td{border-bottom:0}
+details{border-top:2px solid var(--line);padding:16px 0}
+details:last-of-type{border-bottom:2px solid var(--line)}
+summary{cursor:pointer;font-weight:800;font-size:19px;list-style:none;display:flex;justify-content:space-between;gap:16px}
+summary::-webkit-details-marker{display:none}
+summary:after{content:"+";color:var(--coral);font-size:24px;line-height:1}
+details[open] summary:after{content:"\2013"}
+details p{color:var(--muted)}
+
+footer{background:var(--navy);color:#cfe3ef;padding:34px 0 40px;font-size:14px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:16px 30px;justify-content:space-between;align-items:center}
+footer nav{display:flex;flex-wrap:wrap;gap:10px 22px}
+footer a{font-weight:600}
+footer a:hover{color:#fff;text-decoration:underline}
+</style>
+</head>
+<body>
+<header class="nav"><div class="wrap"><a class="brand" href="../../spellshore/">Spell <b>Shore</b></a><nav aria-label="Main"><ul><li><a class="link" href="../../spellshore/">Game</a></li><li><a class="link" href="../../spellshore/parents/">Parents</a></li><li><a class="link" href="../../spellshore/support/">Support</a></li><li><a class="link" href="../../">Studio</a></li></ul></nav></div></header>
+<main>
+<section class="sea doc-head"><div class="sun" aria-hidden="true"></div><div class="isle" aria-hidden="true"></div><div class="wave" aria-hidden="true"></div><div class="wrap" style="max-width:780px">
+  <p class="eyebrow" style="color:#fff3c4">Spell Shore</p>
+  <h1>Delete data</h1>
+  <p class="meta">Spell Shore by Orion Lab Studios</p>
+</div></section>
+<section class="doc"><div class="wrap">
+  <p>Spell Shore keeps your child's progress <strong>only on their device</strong>. It has no accounts, and nothing is sent to us or to anyone else. You can erase everything at any time.</p>
+  <h2>In the game</h2>
+  <ol>
+    <li>Open <strong>For Parents</strong> and answer the grown-up question.</li>
+    <li>Tap <strong>Start the game over</strong> and confirm.</li>
+  </ol>
+  <h2>On the device</h2>
+  <ul>
+    <li><strong>App:</strong> delete Spell Shore from the device.</li>
+    <li><strong>Web version:</strong> clear the site data for Spell Shore in your browser's settings.</li>
+  </ul>
+  <h2>What is deleted</h2>
+  <div class="tablewrap"><table>
+    <tr><th>Data</th><th>Where it is</th><th>What happens</th></tr>
+    <tr><td>Game progress, island, settings</td><td>The device only</td><td>Erased</td></tr>
+    <tr><td>Learning stats (words practised, letters missed, minutes played)</td><td>The device only</td><td>Erased</td></tr>
+    <tr><td>Accounts, names, email</td><td>None exist</td><td>Nothing to delete</td></tr>
+    <tr><td>Anything on our servers</td><td>None</td><td>Nothing to delete</td></tr>
+  </table></div>
+  <p>Questions: <a href="mailto:orionlabstudios@gmail.com">orionlabstudios@gmail.com</a>. More detail in our <a href="../privacy/">privacy policy</a>.</p>
+</div></section>
+
+</main>
+<footer><div class="wrap"><span>&copy; 2026 Orion Lab Studios</span><nav aria-label="Footer"><a href="../../spellshore/parents/">For parents</a><a href="../../spellshore/support/">Support</a><a href="../../spellshore/privacy/">Privacy</a><a href="../../spellshore/delete-data/">Delete data</a><a href="../../spellshore/terms/">Terms</a><a href="../../">Orion Lab Studios</a></nav></div></footer>
+</body>
+</html>
