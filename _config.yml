@@ -1,0 +1,5 @@
+# GitHub Pages: keep the repo's internal files off the live site.
+exclude:
+  - CLAUDE.md
+  - START-HERE.md
+  - docs/
