@@ -1,5 +1,7 @@
 # Orion Lab Studios website: rules for Claude Code
 
+**Read `START-HERE.md` first.**
+
 The studio website at https://orionlabstudio.com, served by GitHub Pages from `main`, including the privacy, terms and delete-data pages for the games.
 
 ## Branches

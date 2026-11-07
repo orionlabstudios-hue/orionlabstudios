@@ -3,3 +3,4 @@ exclude:
   - CLAUDE.md
   - START-HERE.md
   - docs/
+  - tools/
