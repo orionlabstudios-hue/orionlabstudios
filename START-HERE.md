@@ -43,3 +43,4 @@ There is nothing to build.
 - The public email is `support@orionlabstudio.com`. `admin@orionlabstudio.com` is never published.
 - Legal text changes only with King's yes. The attorney decides the wording.
 - King does the clicks at Bizee, Namecheap and GitHub settings. Never ask for or type a password.
+- `app-ads.txt` stays a placeholder (comments only, no seller lines) until our AdMob and Kidoz accounts exist.
