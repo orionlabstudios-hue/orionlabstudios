@@ -176,13 +176,14 @@ footer a:hover{color:var(--text)}
 .pill:focus-visible,.card:focus-visible{border-radius:999px}
 .card:focus-visible{border-radius:18px}
 </style>
+<link rel="stylesheet" href="/story.css">
 </head>
-<body>
+<body class="story g-cc">
+<canvas id="sky" aria-hidden="true"></canvas>
 <header class="nav"><div class="wrap"><a class="brand" href="../cloudchase/">Cloud <span>Chase</span></a><nav aria-label="Main"><ul><li><a class="link" href="../cloudchase/" aria-current="page">Game</a></li><li><a class="link" href="../cloudchase/support/">Support</a></li><li><a class="link" href="../">Studio</a></li></ul></nav></div></header>
 <main>
 
 <section class="sky hero game">
-  <div class="stars" aria-hidden="true"></div><div class="cloud c1" aria-hidden="true"></div><div class="cloud c2" aria-hidden="true"></div><div class="cloud c3" aria-hidden="true"></div>
   <div class="wrap">
     <p class="eyebrow">Orion Lab Studios presents</p>
     <h1>Cloud<br>Chase</h1>
@@ -194,7 +195,17 @@ footer a:hover{color:var(--text)}
       <a class="pill" href="https://www.instagram.com/cloudchasegame" rel="noopener">Follow <small>@cloudchasegame</small></a>
     </div>
   </div>
+<div class="scrollcue" aria-hidden="true"></div>
 </section>
+<section class="gpin" data-gpin aria-label="Cloud Chase, in three lines">
+  <div class="gstage">
+    <div class="pscene sc-cc"><div class="sun"></div><div class="puff p3"></div><div class="puff p1"></div><div class="puff p2"></div><div class="road"></div></div>
+    <div class="gshade"></div>
+    <div class="glines"><p class="gline">An impossible road <em>above a drowned world.</em></p><p class="gline">Eighty-one levels, <em>from the first temple to the last tower.</em></p><p class="gline">One girl, <em>and a sky that remembers.</em></p></div>
+    <p class="gkey" aria-hidden="true">Cloud Chase</p>
+  </div>
+</section>
+
 
 <section class="block">
   <div class="wrap split">
@@ -247,5 +258,6 @@ footer a:hover{color:var(--text)}
 </main>
 <div class="ramp" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
 <footer><div class="wrap"><span>&copy; 2026 Orion Lab Studios LLC, a Wyoming limited liability company</span><nav aria-label="Footer"><a href="../cloudchase/support/">Support</a><a href="../cloudchase/privacy/">Privacy</a><a href="../cloudchase/delete-data/">Delete your data</a><a href="../cloudchase/terms/">Terms</a><a href="../">Orion Lab Studios</a></nav></div></footer>
+<script src="/story.js" defer></script>
 </body>
 </html>
