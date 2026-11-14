@@ -553,12 +553,23 @@
     o.wf = wf; o.sx = 2 * (left + W / 2) / CW - 1;
     return o;
   }
+  // tall layouts (a phone) put the instrument at the top. The top bar is taller on a game's pages (two rows), so the
+  // instrument starts below the bar: it keeps its lower edge where it was and shrinks a little to fit.
+  function fitBelowBar(o) {
+    var barEl = doc.getElementById('bar'); if (!portrait || !barEl) return o;
+    var top = barEl.getBoundingClientRect().bottom + 14;
+    var D = Math.min(o.wf * CW, o.hf * CH), cy = (1 - o.sy) / 2 * CH;
+    if (cy - D / 2 >= top) return o;
+    var D2 = Math.max(0.6 * D, Math.min(D, cy + D / 2 - top));
+    o.hf = D2 / CH; o.sy = 1 - 2 * (top + D2 / 2) / CH;
+    return o;
+  }
   function buildKeys() {
     portrait = CW / CH < 0.9;
     var P = portrait;
     textRight = P ? 0 : measureText();
     if (MODE === 'home') {
-      var hero = fitRight(view(P ? { R: 2.05, wf: 0.98, hf: 0.56, sy: 0.30 } : { R: 2.2, wf: 0.6, hf: 0.92, sx: 0.36 }));
+      var hero = fitBelowBar(fitRight(view(P ? { R: 2.05, wf: 0.98, hf: 0.56, sy: 0.30 } : { R: 2.2, wf: 0.6, hf: 0.92, sx: 0.36 })));
       var ex = view(P ? { yaw: -0.95, pitch: 0.42, R: 2.7, wf: 1.0, hf: 0.62, sy: 0.18, t: [0, 0, -0.5] } : { yaw: -1.0, pitch: 0.34, R: 2.65, wf: 0.86, hf: 0.95, sx: 0.05, t: [0, 0, -0.5] });
       var orion = fitRight(view(P ? { yaw: -0.14, pitch: 0.08, R: 0.86, wf: 1.0, hf: 0.5, sy: 0.36, t: [0, 0, lz('frame')] } : { yaw: -0.16, pitch: 0.06, R: 0.88, wf: 0.5, hf: 0.92, sx: 0.42, t: [0, 0, lz('frame')] }));
       var arm = fitRight(view(P ? { yaw: -0.55, pitch: 0.45, R: 1.1, wf: 1, hf: 0.55, sy: 0.3, t: [0, 0, lz('arm')] } : { yaw: -0.55, pitch: 0.4, R: 1.1, wf: 0.58, hf: 0.9, sx: 0.32, t: [0, 0, lz('arm')] }));
@@ -567,7 +578,7 @@
       KEYS = [[0, hero], [0.85, hero], [2.9, ex], [3.0, ex], [3.55, orion], [4.75, orion], [5.15, arm], [5.6, arm], [6.3, badgeView('cc', 0.2)], [7.4, badgeView('cc', 0.12)],
         [8.1, badgeView('ss', -0.2)], [9.1, badgeView('ss', -0.12)], [9.8, badgeView('sb', 0.18)], [10.8, badgeView('sb', 0.1)], [11.9, close], [99, close]];
     } else {
-      var gh = fitRight(view(P ? { R: 1.35, wf: 1.0, hf: 0.56, sy: 0.32 } : { R: 1.3, wf: 0.6, hf: 0.9, sx: 0.36 }));
+      var gh = fitBelowBar(fitRight(view(P ? { R: 1.35, wf: 1.0, hf: 0.56, sy: 0.32 } : { R: 1.3, wf: 0.6, hf: 0.9, sx: 0.36 })));
       var gx = view(P ? { yaw: -0.85, pitch: 0.4, R: 1.7, wf: 1.0, hf: 0.7, sy: 0.12 } : { yaw: -0.9, pitch: 0.34, R: 1.7, wf: 0.62, hf: 0.95, sx: 0.32 });
       var gb = view(P ? { yaw: 0.3, pitch: -0.2, R: 1.5, wf: 1, hf: 0.9 } : { yaw: 0.35, pitch: -0.18, R: 1.4, wf: 0.8, hf: 0.95, sx: 0.2 });
       var gp = qs('[data-gpin]'), g0 = 1, g1 = 2;
@@ -682,30 +693,11 @@
     var n = Math.floor(plain.length * clamp(p * 1.25, 0, 1));
     return plain.slice(0, n);
   }
-  // the header gets its glass back once real text scrolls under it (past the instrument, or any scroll when it is a still picture)
-  var bar = doc.getElementById('bar'), trackEl = qs('[data-track]');
-  function barState() {
-    if (!bar) return;
-    var on = doc.documentElement.classList.contains('astro-on') && trackEl ? trackEl.getBoundingClientRect().bottom < 90 : (win.pageYOffset || 0) > 30;
-    if (on !== bar.classList.contains('solid')) bar.classList.toggle('solid', on);
-  }
-  win.addEventListener('scroll', barState, { passive: true }); barState();
-  // on a phone the four tabs do not all fit: the strip scrolls sideways, fades at whichever edge has more, and follows the active tab
-  var tabNav = bar ? bar.querySelector('nav') : null;
-  function tabFade() {
-    if (!tabNav) return;
-    var more = tabNav.scrollWidth - tabNav.clientWidth > 2;
-    tabNav.classList.toggle('fade-r', more && tabNav.scrollLeft < tabNav.scrollWidth - tabNav.clientWidth - 2);
-    tabNav.classList.toggle('fade-l', more && tabNav.scrollLeft > 2);
-  }
-  function keepTabVisible(t) {
-    if (!tabNav || tabNav.scrollWidth - tabNav.clientWidth <= 2) return;
-    var l = t.offsetLeft - 28, r = t.offsetLeft + t.offsetWidth + 28;
-    if (l < tabNav.scrollLeft) tabNav.scrollLeft = Math.max(0, l);
-    else if (r > tabNav.scrollLeft + tabNav.clientWidth) tabNav.scrollLeft = r - tabNav.clientWidth;
-  }
-  if (tabNav) { tabNav.addEventListener('scroll', tabFade, { passive: true }); win.addEventListener('resize', tabFade, { passive: true }); win.setTimeout(tabFade, 50); }
-  var tabs = qsa('[data-tab]');
+  // the top bar itself (solid once text is under it, the sideways-scrolling tab row and its fades) is /astro/bar.js,
+  // the same on every page. Here: only the home page's tabs fly the camera and light up as it moves; on every other
+  // page the tabs are plain links and their highlight is fixed in the page.
+  function keepTabVisible(t) { if (win.AstroBar) win.AstroBar.keep(t); }
+  var tabs = MODE === 'home' ? qsa('[data-tab]') : [];
   var dial = qs('.dial-needle'), dialArc = qs('.dial-arc');
 
   /* ------------------------------------------------------------------ state */

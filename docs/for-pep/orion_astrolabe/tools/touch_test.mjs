@@ -11,14 +11,16 @@ const results = [];
 const errs = [];
 function rec(name, ok, note) { results.push({ name, ok, note }); console.log((ok ? 'PASS ' : 'FAIL ') + name + (note ? '  - ' + note : '')); }
 
+const MAIL_STUB = "window.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('a[href^=\"mailto:\"],a[href^=\"tel:\"]');if(!a)return;(window.__mail=window.__mail||[]).push({href:a.getAttribute('href'),prevented:e.defaultPrevented});e.preventDefault();},false);";
+const mailOk = async (page, href) => { const t = await page.evaluate('window.__mail || []').catch(() => []); return t.length > 0 && t[0].href === href && !t[0].prevented; };
 async function pool(items, fn, n = 4) { let next = 0; const w = async () => { while (next < items.length) { const it = items[next++]; await fn(it); } }; await Promise.all(Array.from({ length: n }, w)); }
 async function fresh(path = '/', opts = {}) {
   const ctx = await browser.newContext({ ...dev, serviceWorkers: 'block' });
+  await ctx.addInitScript(MAIL_STUB);
   const page = await ctx.newPage();
   page.on('pageerror', (e) => errs.push('PAGEERROR ' + e.message + ' @ ' + page.url()));
   page.on('console', (m) => { if (m.type() === 'error' && !/favicon/.test(m.text())) errs.push('CONSOLE ' + m.text() + ' @ ' + page.url()); });
   page.external = [];
-  page.on('request', (r) => { if (r.url().startsWith('mailto:')) page.external.push(r.url()); });
   await page.route('**/*', (route) => {
     const u = route.request().url();
     if (u.startsWith(BASE) || u.startsWith('data:') || u.startsWith('blob:') || /orionlabstudio\.com/.test(u) && BASE.includes('orionlabstudio.com')) return route.continue();
@@ -93,7 +95,7 @@ async function suiteHome() {
         else { ok = Math.abs(y1 - want) < 14 && url.pathname === '/'; note = 'scroll ' + y1 + ' (want ' + Math.round(want) + ') path ' + url.pathname; }
       }
       else if (href.startsWith('#')) { const id = href.slice(1); const r = await page.evaluate((i) => { const e = document.getElementById(i); return e ? Math.round(e.getBoundingClientRect().top) : null; }, id); ok = url.hash === href && url.pathname === '/'; note = 'hash ' + url.hash + (r != null ? ', section top ' + r : ''); }
-      else if (href.startsWith('mailto:')) { const t = await page.evaluate('window.__tap').catch(() => null); const req = page.external.some((u) => u.startsWith('mailto:')); ok = !!(t && t.length > 0 && !t[0].prevented) || req; note = req ? 'mail link opened (the browser asked for ' + href + ')' : 'mail link opened (click reached it, not blocked)'; }
+      else if (href.startsWith('mailto:') || href.startsWith('tel:')) { ok = await mailOk(page, href) && new URL(page.url()).pathname === '/'; note = 'the tap reached the link, address ' + href + ', nothing blocked it (stubbed: not handed to Windows)'; }
       else if (/^https?:/.test(href)) { ok = page.external.some((u) => u.startsWith(href.replace(/\/$/, ''))); note = 'requested ' + href; }
       else if (c.where === 'header' && /mark|orion/i.test(c.text) || (href === '/' && c.text.includes('orion'))) { ok = url.pathname === '/' && y1 <= 6; note = 'back at the start, scroll ' + y1; }
       else { ok = url.pathname === new URL(href, BASE + '/').pathname; note = 'opened ' + url.pathname; }
@@ -215,7 +217,7 @@ async function suiteGames() {
         await page.locator('a[href],button').nth(c.i).tap({ timeout: 6000 });
         await page.waitForTimeout(1800);
         const url = new URL(page.url()); const href = c.href || '';
-        if (href.startsWith('mailto:')) { const t = await page.evaluate('window.__tap').catch(() => null); const req = page.external.some((u) => u.startsWith('mailto:')); ok = !!(t && t.length > 0 && !t[0].prevented) || req; note = 'mail link opened'; }
+        if (href.startsWith('mailto:') || href.startsWith('tel:')) { ok = await mailOk(page, href); note = 'the tap reached the link, address ' + href + ', nothing blocked it (stubbed: not handed to Windows)'; }
         else if (/^https?:/.test(href) && !href.startsWith(BASE)) { ok = page.external.some((u) => u.startsWith(href.replace(/\/$/, ''))); note = 'requested ' + href; }
         else { const want = new URL(href, BASE + path); ok = url.pathname === want.pathname && (want.hash ? url.hash === want.hash : true); note = 'opened ' + url.pathname + url.hash; }
       } catch (e) { note = 'TAP FAILED: ' + String(e.message).split('\n')[0].slice(0, 150); }

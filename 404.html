@@ -181,7 +181,12 @@ footer a:hover{color:var(--text)}
 </head>
 <body class="astro astro-doc" data-sky="studio">
 <canvas id="sky" aria-hidden="true"></canvas>
-<header class="nav"><div class="wrap"><a class="brand" href="/">orion <span>lab studios</span></a><nav aria-label="Main"><ul><li><a class="link" href="/">Home</a></li><li><a class="link" href="/cloudchase/">Cloud Chase</a></li><li><a class="link" href="/spellshore/">Spell Shore</a></li><li><a class="link" href="./#contact">Contact</a></li></ul></nav></div></header>
+<header class="bar" id="bar">
+  <div class="wrap">
+    <a class="mark" href="/" aria-label="Orion Lab Studios home"><svg viewBox="0 0 26 26" aria-hidden="true"><g stroke="rgba(241,236,226,.45)" stroke-width=".8" fill="none"><path d="M7 5 L11 12 L13 11.6 L15 11.2 L19 6 M11 12 L8 21 M15 11.2 L19.5 20"/></g><g fill="#FFF6E0"><circle cx="7" cy="5" r="1.7"/><circle cx="19" cy="6" r="1.3"/><circle cx="11" cy="12" r="1"/><circle cx="13" cy="11.6" r="1"/><circle cx="15" cy="11.2" r="1"/><circle cx="8" cy="21" r="1.2"/><circle cx="19.5" cy="20" r="1.6"/></g></svg><span>orion <i>lab<span class="full"> studios</span></i></span></a>
+    <nav aria-label="Main"><ul class="tabs"><li><a href="/" data-g="home">Home</a></li><li><a href="/cloudchase/" data-g="cc">Cloud Chase</a></li><li><a href="/spellshore/" data-g="ss">Spell Shore</a></li><li><a href="/shaftbound/" data-g="sb">Shaft Bound</a></li><li><a href="/#contact" data-g="contact">Contact</a></li></ul></nav>
+  </div>
+</header>
 <main>
 
 <section class="sky hero">
@@ -197,6 +202,7 @@ footer a:hover{color:var(--text)}
 </main>
 <div class="ramp" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
 <footer><div class="wrap"><span>&copy; 2026 Orion Lab Studios LLC, a Wyoming limited liability company</span><nav aria-label="Footer"><a href="/cloudchase/support/">Support</a><a href="/cloudchase/privacy/">Privacy</a><a href="/cloudchase/delete-data/">Delete your data</a><a href="/cloudchase/terms/">Terms</a><a href="/">Orion Lab Studios</a></nav></div></footer>
+<script src="/astro/bar.js" defer></script>
 <script src="/astro/sky.js" defer></script>
 <script src="/astro/trail.js" defer></script>
 </body>
