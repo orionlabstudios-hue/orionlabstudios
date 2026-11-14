@@ -2,7 +2,7 @@
    Everything here is drawn in code: no images, no video, no libraries, no cookies, no analytics, no network calls
    (the only requests are the optional sound files in /astro/sounds/, and only after the visitor turns sound ON).
    A small WebGL line renderer draws a brass star instrument in thousands of fine glowing lines, in real 3D.
-   The stars on the base plate and in Orion are real: positions from the Yale Bright Star Catalogue (astro/stars.js).
+   The stars on the base plate and in Orion are real: positions from the HYG Database v4.1, CC BY-SA 4.0 (astro/stars.js; see astro/STAR-DATA-LICENCE.txt).
    Scroll takes it apart like an exploded engineering drawing; the game rings carry each game's constellation.
    "Reduce motion": a still, assembled astrolabe and normal scrolling. Slow devices get a lighter version automatically.
    Page modes come from <body data-astro="home|game" data-game="cc|ss|sb">. */
@@ -173,7 +173,7 @@
       var p = stereo(s.ra, s.dec), m = s.mag;
       g.pt(p[0], p[1], z + 0.001, 0.0035 + 0.0042 * Math.max(0, 5.9 - m), SPEC[s.sp] || SPEC[2], clamp(0.95 - m * 0.08, 0.45, 1), 0, 0);
     }
-    g.arcText('SKY MAP * ' + STAR_COUNT + ' REAL STARS * YALE BRIGHT STAR CATALOGUE * J2000 * NORTH POLE CENTRED', 0, 0, 0.838, 270 * DEG, 0.017, z, PALE, 0.38, true);
+    g.arcText('SKY MAP * ' + STAR_COUNT + ' REAL STARS * HYG DATABASE * CC BY-SA 4.0 * J2000 * NORTH POLE CENTRED', 0, 0, 0.838, 270 * DEG, 0.017, z, PALE, 0.38, true);
     g.circle(0, 0, 0.012, z, B, 0.7); g.circle(0, 0, 0.022, z, B, 0.5);
   }
 
@@ -669,6 +669,21 @@
     if (on !== bar.classList.contains('solid')) bar.classList.toggle('solid', on);
   }
   win.addEventListener('scroll', barState, { passive: true }); barState();
+  // on a phone the four tabs do not all fit: the strip scrolls sideways, fades at whichever edge has more, and follows the active tab
+  var tabNav = bar ? bar.querySelector('nav') : null;
+  function tabFade() {
+    if (!tabNav) return;
+    var more = tabNav.scrollWidth - tabNav.clientWidth > 2;
+    tabNav.classList.toggle('fade-r', more && tabNav.scrollLeft < tabNav.scrollWidth - tabNav.clientWidth - 2);
+    tabNav.classList.toggle('fade-l', more && tabNav.scrollLeft > 2);
+  }
+  function keepTabVisible(t) {
+    if (!tabNav || tabNav.scrollWidth - tabNav.clientWidth <= 2) return;
+    var l = t.offsetLeft - 28, r = t.offsetLeft + t.offsetWidth + 28;
+    if (l < tabNav.scrollLeft) tabNav.scrollLeft = Math.max(0, l);
+    else if (r > tabNav.scrollLeft + tabNav.clientWidth) tabNav.scrollLeft = r - tabNav.clientWidth;
+  }
+  if (tabNav) { tabNav.addEventListener('scroll', tabFade, { passive: true }); win.addEventListener('resize', tabFade, { passive: true }); win.setTimeout(tabFade, 50); }
   var tabs = qsa('[data-tab]');
   var dial = qs('.dial-needle'), dialArc = qs('.dial-arc');
   var reticle = null;
@@ -1009,7 +1024,7 @@
       var contact = doc.getElementById('contact');
       if (contact && contact.getBoundingClientRect().top < CH * 0.6) cur = 'contact';
       else if (s > 5.9 && s < 7.75) cur = 'cc'; else if (s >= 7.75 && s < 9.45) cur = 'ss'; else if (s >= 9.45 && s < 11.2) cur = 'sb';
-      tabs.forEach(function (t) { var on = t.getAttribute('data-tab') === cur; if (on !== t.classList.contains('on')) { t.classList.toggle('on', on); if (on) t.setAttribute('aria-current', 'true'); else t.removeAttribute('aria-current'); } });
+      tabs.forEach(function (t) { var on = t.getAttribute('data-tab') === cur; if (on !== t.classList.contains('on')) { t.classList.toggle('on', on); if (on) { t.setAttribute('aria-current', 'true'); keepTabVisible(t); } else t.removeAttribute('aria-current'); } });
     }
     if (dial) {
       var maxY = Math.max(1, root.scrollHeight - CH), pr = clamp(scrollY() / maxY, 0, 1);
