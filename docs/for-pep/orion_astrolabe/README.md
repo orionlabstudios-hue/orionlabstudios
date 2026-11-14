@@ -2,6 +2,20 @@
 
 Built on branch `job/orion-astrolabe`. **Live on `main` since 13 Nov (Pep's yes).** The phone fixes and the constellation trail (branch `job/astrolabe-phone-fixes`) went to `main` on 14 Nov with King's yes. The site is at orionlabstudio.com.
 
+## The same top bar on every page (14 Nov)
+
+Branch `job/same-top-bar`. What changed:
+
+1. **One bar on all 23 pages.** The studio star mark and "orion lab studios", then the tabs Home, Cloud Chase, Spell Shore, Shaft Bound, Contact. The mark always goes to the studio home (on the home page it flies to the start). On the home page the tabs fly the camera as before. On every other page Home opens the home page at the top, the three game tabs open that game's page, and Contact opens the home page's contact section. On a game's page and all its small pages that game's tab is lit in the game's colour.
+2. **A second row on a game's pages** with that game's own links: Game, For parents (Spell Shore and Shaft Bound), Support, Privacy, Terms, Delete your data. The link for the page you are on is underlined. It replaces the old game header (the game's name, Home, Game, Parents, Support, Studio). Two wording notes: "Parents" is now "For parents", and the "Studio" link is gone because the mark and the Home tab do that job.
+3. **The studio pages** (website privacy, terms, legal notice, accessibility, the 404 page) had Home, Games, Studio, Promise, Contact. They now have the same five tabs as every other page.
+4. **Phone.** The tab row scrolls sideways with the fade, as on the home page. The second row fits or scrolls the same way. Both rows stay at the top of the screen. The bar turns fully solid as soon as the page scrolls, so text never shows through it. On a game page the instrument now starts below the two-row bar.
+5. **The studio icon** (the home page's) is on the 12 Spell Shore and Shaft Bound pages that had none.
+6. **How it is built:** the bar's look is one block in `astro/astro.css` that takes nothing from a page's own stylesheet, so it is identical everywhere. `astro/bar.js` (new, tiny, on every page) adds the fades, brings the lit tab into view and turns the bar solid; without it the links still work.
+7. **Tests no longer open the mail app.** Mail and phone links are still tested (the tap reaches the link, the address is right, nothing blocks it) but are stopped before Windows gets them.
+
+Test results for this round are in "Quality checks" at the end.
+
 ## Phone fixes and the constellation trail (14 Nov)
 
 Branch `job/astrolabe-phone-fixes`. What changed:
@@ -166,6 +180,24 @@ Test results for this round are in "Quality checks" at the end.
 | Visible text of the 19 policy pages (re-run 13 Nov, against the last commit) | 18 identical. The Legal notice changed by one pure insertion, the star-data credit paragraph, and nothing else. Home page and Cloud Chase page differ only by the edits below. |
 
 `story.css` and `story.js` (the previous design) were deleted on 14 Nov with King's yes, after checking that no page referenced them.
+
+### Checks for the same top bar on every page (14 Nov, on the final code)
+
+Scripts in `tools/`: `bars_test.mjs` (new), `touch_test.mjs`, `tabrow_test.mjs`, `trail_test.mjs`, `textcheck_header.py` (new). Phone tests are real touch taps on an emulated iPhone 13.
+
+| Check | Result |
+|---|---|
+| Bar on every page: 23 pages at 390, 360, 768, 1024 and 1440 wide (one bar with the studio mark; the five tabs and their links; the right tab lit; the second row only on game pages, with the right links and the current page marked; one icon; no sideways page scroll; the bar does not cover the first line of the page; both rows reachable and the lit link fully visible) | Chrome 1,200 of 1,200. WebKit 1,200 of 1,200. No console errors, no failed requests |
+| A real tap on the star mark, every tab and every second-row link of the 22 other pages (229 taps), checking where it lands and that the page it lands on lights the right tab | Chrome 229 of 229. WebKit 229 of 229 |
+| The test broken on purpose (one page: highlight removed, a second-row link pointed at the wrong page) | 12 failures reported, then 66 of 66 after putting the page back |
+| Home page and game pages touch test (every button, rings, mark and Home tab from every stop) | Chrome 131 of 131. WebKit 131 of 131 |
+| Home tab row at 390, 360 and 768 wide | Chrome 24 of 24. WebKit 24 of 24, five runs in a row |
+| Constellation trail, 23 pages at 1440 and 1024 wide | 51 of 51 |
+| Links | 670 local links on 23 pages, 0 broken |
+| Visible text against the last commit, with the header taken out | identical on all 23 pages. The check was shown to catch a one-word change |
+| Reduce motion | Cloud Chase and a Shaft Bound page at 390, home at 1024: no errors |
+
+Header text, old to new: the game pages went from "(game name) Home Game [Parents] Support Studio" to the studio bar plus "Game [For parents] Support Privacy Terms Delete your data"; the studio pages went from "Home Games Studio Promise Contact" to the five tabs; the 404 page gained Shaft Bound.
 
 ### Checks for the phone fixes and the trail (14 Nov, on the final code)
 

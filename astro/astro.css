@@ -32,34 +32,59 @@ body.astro #sky{position:fixed;left:0;top:0;width:100vw;height:115vh;z-index:-2;
 .sname{position:absolute;left:0;top:0;opacity:0;white-space:nowrap;font-family:var(--sans);font-size:10.5px;letter-spacing:.3em;text-transform:uppercase;color:rgba(214,208,226,.92)}
 @media (max-width:600px){.lbl{font-size:8.5px;letter-spacing:.1em}.sname{font-size:9px;letter-spacing:.2em}}
 
-/* ---------- the top bar with the game tabs ---------- */
-.astro .bar{background:linear-gradient(rgba(5,6,10,.72),rgba(5,6,10,0));border-bottom:0}
-.astro .bar.solid{background:rgba(5,6,10,.95);border-bottom:1px solid rgba(241,236,226,.08)}
-.tabs{display:flex;gap:8px;list-style:none}
-.tabs a{display:inline-block;font-family:var(--sans);font-size:11.5px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:#d6d0e2;
+/* ---------- the top bar: the same on every page ----------
+   The studio mark, then Home, Cloud Chase, Spell Shore, Shaft Bound, Contact; on a game's pages a second row with that
+   game's own links. Everything the bar needs is in this block (nothing is taken from a page's own stylesheet), so it
+   looks the same on every page. The fades and the solid state are added by /astro/bar.js; without it the links still work. */
+.astro .bar{--text:#F1ECE2;--muted:#A9A4B4;--gutter:clamp(16px,5vw,56px);--max:1180px;--serif:"Cormorant Garamond",Georgia,"Times New Roman",serif;--sans:"Barlow",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  position:fixed;inset:0 0 auto 0;z-index:50;line-height:1.6;color:var(--text);background:linear-gradient(rgba(5,6,10,.72),rgba(5,6,10,0));border-bottom:1px solid transparent;transition:background .3s,border-color .3s}
+.astro .bar.solid{background:#06070B;border-bottom-color:rgba(241,236,226,.1)}   /* fully opaque: a page's text must never show through the bar */
+.astro .bar>.wrap{display:flex;align-items:center;justify-content:space-between;height:72px;gap:16px}
+.astro .bar .mark{display:flex;align-items:center;gap:12px;font-family:var(--serif);font-size:22px;letter-spacing:.03em;white-space:nowrap;color:var(--text,#F1ECE2);text-decoration:none}
+.astro .bar .mark i{font-style:italic;color:var(--muted)}
+.astro .bar .mark svg{width:26px;height:26px;flex:none}
+.astro .bar nav ul{list-style:none;margin:0}
+.astro .bar nav .tabs{display:flex;gap:30px;padding:0}
+.astro .bar nav .tabs a{display:inline-block;font-family:var(--sans);font-size:12.5px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);text-decoration:none;
   padding:9px 15px;border:1px solid rgba(241,236,226,.16);border-radius:999px;background:rgba(8,9,16,.5);
   -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);transition:color .3s,border-color .3s,background .3s,box-shadow .3s;white-space:nowrap}
-.tabs a:hover{border-color:rgba(241,236,226,.45);color:#fff}
-.bar nav .tabs a.on,.tabs a.on{color:#120d05;background:var(--brass-2);border-color:var(--brass-2);box-shadow:0 0 22px rgba(255,200,120,.45)}
-.tabs a[data-tab="cc"].on{background:#BFE6FF;border-color:#BFE6FF;box-shadow:0 0 22px rgba(159,220,255,.5)}
-.tabs a[data-tab="ss"].on{background:#9DF5DE;border-color:#9DF5DE;box-shadow:0 0 22px rgba(110,240,210,.5)}
-.tabs a[data-tab="sb"].on{background:#FFC98A;border-color:#FFC98A;box-shadow:0 0 22px rgba(255,179,92,.5)}
+.astro .bar nav .tabs a:hover{border-color:rgba(241,236,226,.45);color:var(--text,#fff)}
+.astro .bar nav .tabs a.on{color:#120d05;background:var(--brass-2);border-color:var(--brass-2);box-shadow:0 0 22px rgba(255,200,120,.45)}
+.astro .bar nav .tabs a[data-tab="cc"].on,.astro .bar nav .tabs a[data-g="cc"].on{background:#BFE6FF;border-color:#BFE6FF;box-shadow:0 0 22px rgba(159,220,255,.5)}
+.astro .bar nav .tabs a[data-tab="ss"].on,.astro .bar nav .tabs a[data-g="ss"].on{background:#9DF5DE;border-color:#9DF5DE;box-shadow:0 0 22px rgba(110,240,210,.5)}
+.astro .bar nav .tabs a[data-tab="sb"].on,.astro .bar nav .tabs a[data-g="sb"].on{background:#FFC98A;border-color:#FFC98A;box-shadow:0 0 22px rgba(255,179,92,.5)}
+/* a row that does not fit scrolls sideways and fades at whichever edge has more (the classes come from bar.js) */
+.astro .bar nav{scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.astro .bar nav::-webkit-scrollbar{display:none}
+.astro .bar nav.fade-r{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 44px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 44px),transparent)}
+.astro .bar nav.fade-l{-webkit-mask-image:linear-gradient(90deg,transparent,#000 44px);mask-image:linear-gradient(90deg,transparent,#000 44px)}
+.astro .bar nav.fade-l.fade-r{-webkit-mask-image:linear-gradient(90deg,transparent,#000 44px,#000 calc(100% - 44px),transparent);mask-image:linear-gradient(90deg,transparent,#000 44px,#000 calc(100% - 44px),transparent)}
+/* the second row: a game's own links, only on that game's pages */
+.astro .bar .subbar{display:block;overflow-x:auto;border-top:1px solid rgba(241,236,226,.07)}
+.astro .bar .subbar ul{display:flex;gap:28px;width:max-content;min-width:100%;max-width:none;padding:8px max(var(--gutter),calc((100% - var(--max)) / 2 + var(--gutter))) 9px;white-space:nowrap}
+.astro .bar .subbar a{display:inline-block;font-family:var(--sans);font-size:11px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:3px 0;border-bottom:1px solid transparent;transition:color .2s,border-color .2s}
+.astro .bar .subbar a:hover{color:var(--text,#fff)}
+.astro .bar .subbar a[aria-current]{color:var(--acc);border-bottom-color:var(--acc)}
 @media (max-width:1000px){
-  .astro .bar .wrap{flex-wrap:wrap;height:auto;padding-top:12px;padding-bottom:10px;row-gap:10px}
-  .astro .bar nav{position:relative;width:calc(100% + 2 * var(--gutter));overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin:-14px calc(-1 * var(--gutter));padding:14px 0}
-  .astro .bar nav::-webkit-scrollbar{display:none}
+  .astro .bar>.wrap{flex-wrap:wrap;height:auto;padding-top:12px;padding-bottom:10px;row-gap:10px}
+  .astro .bar>.wrap>nav{position:relative;width:calc(100% + 2 * var(--gutter));overflow-x:auto;margin:-14px calc(-1 * var(--gutter));padding:14px 0}
   /* the end padding lives on the list, not the scroller, so the last tab can scroll fully clear of the edge */
-  .astro .bar nav>ul{width:max-content;min-width:100%;padding:0 var(--gutter);box-sizing:border-box}
-  .tabs a{font-size:10px;letter-spacing:.14em;padding:8px 12px}
-  /* the full name on a phone, a little smaller; the tabs scroll sideways and fade at whichever edge has more */
+  .astro .bar>.wrap>nav>ul{width:max-content;min-width:100%;padding:0 var(--gutter);box-sizing:border-box}
+  .astro .bar nav .tabs a{padding:8px 12px}
+  /* the full name on a phone, a little smaller */
   .astro .bar .mark{font-size:19px;gap:10px}
   .astro .bar .mark svg{width:22px;height:22px}
   .astro .bar .mark span.full{display:inline}
-  .astro .bar nav.fade-r{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 44px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 44px),transparent)}
-  .astro .bar nav.fade-l{-webkit-mask-image:linear-gradient(90deg,transparent,#000 44px);mask-image:linear-gradient(90deg,transparent,#000 44px)}
-  .astro .bar nav.fade-l.fade-r{-webkit-mask-image:linear-gradient(90deg,transparent,#000 44px,#000 calc(100% - 44px),transparent);mask-image:linear-gradient(90deg,transparent,#000 44px,#000 calc(100% - 44px),transparent)}
+}
+@media (max-width:720px){
+  .astro .bar nav .tabs{gap:16px}
+  .astro .bar nav .tabs a{font-size:11px;letter-spacing:.14em}
+  .astro .bar .subbar ul{gap:20px;padding-top:6px;padding-bottom:8px}
+  .astro .bar .subbar a{font-size:10.5px;letter-spacing:.16em}
 }
 @media (max-width:360px){.astro .bar .mark{font-size:17px}}
+/* pages with a second row: the first line of the page starts clear of the taller bar */
+body.astro-doc .doc-head{padding-top:max(150px,calc(var(--bar-h,112px) + 44px))}
 
 /* ---------- the stops (cards) ---------- */
 .track{position:relative}
@@ -206,12 +231,6 @@ html:not(.astro-on) .glines{position:relative;display:block;padding:14vh var(--g
   .stop h1{font-size:clamp(52px,9vw,100px)}
   .stop h2{font-size:clamp(40px,5.6vw,72px)}
   .astro-on .stop:not([data-stop="parts"]):not([data-stop="close"])::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(90deg,rgba(5,6,10,.82),rgba(5,6,10,.58) 36%,rgba(5,6,10,0) 64%)}
-}
-/* the header of the game pages and their small pages: the five links wrap under the name on a phone instead of running off the edge */
-@media (max-width:560px){
-  .nav .wrap{flex-wrap:wrap;height:auto;padding-top:14px;padding-bottom:8px;row-gap:10px}
-  .nav nav{width:100%}
-  .nav ul{flex-wrap:wrap;gap:8px 16px}
 }
 /* room under the fine print so the fixed sound button and dial never sit on the last line */
 body.astro footer.f .fine{padding-bottom:72px}
