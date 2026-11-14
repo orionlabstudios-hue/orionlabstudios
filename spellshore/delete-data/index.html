@@ -186,8 +186,11 @@ footer a:hover{color:var(--text)}
 .doc a{border-bottom-color:rgba(92,200,224,.35)}
 .ramp.ss i{background:#5CC8E0}.ramp.ss i:nth-child(3n+2){background:#FFC62E}.ramp.ss i:nth-child(3n){background:#F2E6C8}
 </style>
+<link rel="stylesheet" href="/astro/astro.css">
+<link rel="stylesheet" href="/astro/docs.css">
 </head>
-<body>
+<body class="astro astro-doc" data-sky="ss">
+<canvas id="sky" aria-hidden="true"></canvas>
 
 <header class="nav"><div class="wrap"><a class="brand" href="../../spellshore/">Spell <span>Shore</span></a><nav aria-label="Main"><ul><li><a class="link" href="../../spellshore/">Game</a></li><li><a class="link" href="../../spellshore/parents/">Parents</a></li><li><a class="link" href="../../spellshore/support/">Support</a></li><li><a class="link" href="../../">Studio</a></li></ul></nav></div></header>
 <main>
@@ -225,5 +228,6 @@ footer a:hover{color:var(--text)}
 <div aria-hidden="true" class="ramp ss"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
 <footer><div class="wrap"><span>© 2026 Orion Lab Studios LLC, a Wyoming limited liability company</span><nav aria-label="Footer"><a href="../../spellshore/parents/">For parents</a><a href="../../spellshore/support/">Support</a><a href="../../spellshore/privacy/">Privacy</a><a href="../../spellshore/delete-data/">Delete data</a><a href="../../spellshore/terms/">Terms</a><a href="../../">Orion Lab Studios</a></nav></div></footer>
 
+<script src="/astro/sky.js" defer></script>
 </body>
 </html>
