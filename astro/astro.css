@@ -14,6 +14,8 @@ body.astro::before{content:"";position:fixed;inset:0;z-index:-3;pointer-events:n
 body.astro[data-sky="cc"]{--aura-a:rgba(120,170,230,.24);--aura-b:rgba(215,155,124,.12);--aura-c:rgba(159,220,255,.16);--acc:#9FDCFF}
 body.astro[data-sky="ss"]{--aura-a:rgba(60,200,190,.24);--aura-b:rgba(255,198,46,.12);--aura-c:rgba(110,240,210,.16);--acc:#6EF0D2}
 body.astro[data-sky="sb"]{--aura-a:rgba(230,150,70,.24);--aura-b:rgba(255,207,106,.12);--aura-c:rgba(140,242,255,.10);--acc:#FFB35C}
+/* Red Landing's own red sky (the game's title look A: moon glow high right, ember low left, a blood-red haze at the horizon) */
+body.astro[data-sky="rl"]{--aura-a:rgba(200,40,24,.30);--aura-b:rgba(255,138,60,.09);--aura-c:rgba(124,18,12,.34);--acc:#F2704F}
 
 /* the canvases: background stars, the instrument, its overlay; all fixed behind the content */
 body.astro #sky{position:fixed;left:0;top:0;width:100vw;height:115vh;z-index:-2;pointer-events:none}
@@ -44,7 +46,9 @@ body.astro #sky{position:fixed;left:0;top:0;width:100vw;height:115vh;z-index:-2;
 .astro .bar .mark i{font-style:italic;color:var(--muted)}
 .astro .bar .mark svg{width:26px;height:26px;flex:none}
 .astro .bar nav ul{list-style:none;margin:0}
-.astro .bar nav .tabs{display:flex;gap:30px;padding:0}
+.astro .bar nav .tabs{display:flex;gap:22px;padding:0}
+/* six tabs since Red Landing (14 Nov): between the phone layout and a wide screen they sit a little closer so the row fits */
+@media (min-width:1061px) and (max-width:1300px){.astro .bar nav .tabs{gap:10px}.astro .bar nav .tabs a{padding:9px 12px;letter-spacing:.15em}.astro .bar>.wrap{gap:12px}}
 .astro .bar nav .tabs a{display:inline-block;font-family:var(--sans);font-size:12.5px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);text-decoration:none;
   padding:9px 15px;border:1px solid rgba(241,236,226,.16);border-radius:999px;background:rgba(8,9,16,.5);
   -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);transition:color .3s,border-color .3s,background .3s,box-shadow .3s;white-space:nowrap}
@@ -53,6 +57,7 @@ body.astro #sky{position:fixed;left:0;top:0;width:100vw;height:115vh;z-index:-2;
 .astro .bar nav .tabs a[data-tab="cc"].on,.astro .bar nav .tabs a[data-g="cc"].on{background:#BFE6FF;border-color:#BFE6FF;box-shadow:0 0 22px rgba(159,220,255,.5)}
 .astro .bar nav .tabs a[data-tab="ss"].on,.astro .bar nav .tabs a[data-g="ss"].on{background:#9DF5DE;border-color:#9DF5DE;box-shadow:0 0 22px rgba(110,240,210,.5)}
 .astro .bar nav .tabs a[data-tab="sb"].on,.astro .bar nav .tabs a[data-g="sb"].on{background:#FFC98A;border-color:#FFC98A;box-shadow:0 0 22px rgba(255,179,92,.5)}
+.astro .bar nav .tabs a[data-tab="rl"].on,.astro .bar nav .tabs a[data-g="rl"].on{background:#FF9C86;border-color:#FF9C86;box-shadow:0 0 22px rgba(240,90,58,.55)}
 /* a row that does not fit scrolls sideways and fades at whichever edge has more (the classes come from bar.js) */
 .astro .bar nav{scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .astro .bar nav::-webkit-scrollbar{display:none}
@@ -65,7 +70,7 @@ body.astro #sky{position:fixed;left:0;top:0;width:100vw;height:115vh;z-index:-2;
 .astro .bar .subbar a{display:inline-block;font-family:var(--sans);font-size:11px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:3px 0;border-bottom:1px solid transparent;transition:color .2s,border-color .2s}
 .astro .bar .subbar a:hover{color:var(--text,#fff)}
 .astro .bar .subbar a[aria-current]{color:var(--acc);border-bottom-color:var(--acc)}
-@media (max-width:1000px){
+@media (max-width:1060px){
   .astro .bar>.wrap{flex-wrap:wrap;height:auto;padding-top:12px;padding-bottom:10px;row-gap:10px}
   .astro .bar>.wrap>nav{position:relative;width:calc(100% + 2 * var(--gutter));overflow-x:auto;margin:-14px calc(-1 * var(--gutter));padding:14px 0}
   /* the end padding lives on the list, not the scroller, so the last tab can scroll fully clear of the edge */
@@ -103,8 +108,10 @@ body.astro-doc .doc-head{padding-top:max(150px,calc(var(--bar-h,112px) + 44px))}
 .stop .row{display:flex;flex-wrap:wrap;gap:12px 22px;margin-top:28px;align-items:center}
 .stop .num{font-family:var(--orb);font-size:10.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--brass);display:block;margin-bottom:14px}
 .game h2{color:#fff}
-.game[data-stop="cc"] .num{color:#BFE6FF}.game[data-stop="ss"] .num{color:#9DF5DE}.game[data-stop="sb"] .num{color:#FFC98A}
-.game[data-stop="cc"] .btn.solid{background:#DDF2FF}.game[data-stop="ss"] .btn.solid{background:#D4FBF0}.game[data-stop="sb"] .btn.solid{background:#FFE3BF}
+.game[data-stop="cc"] .num{color:#BFE6FF}.game[data-stop="ss"] .num{color:#9DF5DE}.game[data-stop="sb"] .num{color:#FFC98A}.game[data-stop="rl"] .num{color:#FF9C86}
+.game[data-stop="cc"] .btn.solid{background:#DDF2FF}.game[data-stop="ss"] .btn.solid{background:#D4FBF0}.game[data-stop="sb"] .btn.solid{background:#FFE3BF}.game[data-stop="rl"] .btn.solid{background:#FFD3C8}
+.stop .note{margin-top:12px;font-size:14px;line-height:1.45;color:#CFC9DA;max-width:44ch}
+.stop .note b{color:#F3EDE4;font-weight:600}
 .hint{display:block;margin-top:34px;font-family:var(--orb);font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:rgba(241,236,226,.5)}
 .stop .small{font-family:var(--orb);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:rgba(241,236,226,.55);margin-top:20px}
 
@@ -117,7 +124,7 @@ html:not(.astro-on) .hint{display:none}
 html:not(.astro-on) .stop[data-stop="hero"] .card{background:none;border:0;-webkit-backdrop-filter:none;backdrop-filter:none;padding:0}
 
 /* the animated, pinned scroll */
-.astro-on .track{height:calc(13.4 * 100vh)}
+.astro-on .track{height:calc(15.1 * 100vh)}
 .astro-on .stop{position:fixed;left:0;right:0;top:0;bottom:0;padding:0;display:flex;align-items:center;opacity:0;pointer-events:none;will-change:opacity,transform}
 .astro-on .stop[data-stop="hero"]{opacity:1}
 .astro-on .stop>.wrap{width:100%}
@@ -145,6 +152,8 @@ html:not(.astro-on) .stop[data-stop="hero"] .card{background:none;border:0;-webk
   .stop .row{margin-top:20px}
   .stop .meta{margin-top:12px;gap:6px}
   .stop .meta .chip{font-size:9.5px;padding:6px 10px;letter-spacing:.14em}
+  .stop .note{font-size:13px;margin-top:8px}
+  .stop .note .age{display:none}   /* phones: the age guidance is on the game page; the home card keeps the price */
   .hint{margin-top:18px;letter-spacing:.18em;font-size:9px}
 }
 @media (max-aspect-ratio:9/10) and (max-height:700px){.stop p.d{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}}
@@ -181,6 +190,8 @@ html:not(.astro-on) .stop[data-stop="hero"] .card{background:none;border:0;-webk
 .astro .hero.game .wrap{position:relative;z-index:2}
 @media (max-aspect-ratio:9/10){.astro .hero.game{align-items:flex-end;padding-bottom:calc(72px + env(safe-area-inset-bottom))}.astro .hero.game::before{content:"";position:absolute;inset:auto 0 0 0;height:60%;background:linear-gradient(rgba(5,6,10,0),rgba(5,6,10,.8) 45%,rgba(5,6,10,.92));pointer-events:none}}
 .astro .hero.game{position:relative}
+/* 1001-1060 px: the bar is two rows there since the sixth tab (14 Nov), so a game page's first line starts below it */
+@media (min-width:1001px) and (max-width:1060px){.astro .hero.game{padding-top:calc(var(--bar-h,148px) + 28px)}}
 .astro .hero.game h1{text-shadow:0 2px 40px rgba(0,0,0,.6)}
 .astro .hero .eyebrow{animation:rise 1.2s cubic-bezier(.2,.7,.2,1) .5s both}
 .astro .hero h1{animation:rise 1.6s cubic-bezier(.2,.7,.2,1) .7s both}

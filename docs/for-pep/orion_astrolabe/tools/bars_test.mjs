@@ -8,12 +8,15 @@ const [, , engine = 'chromium', BASE = 'http://127.0.0.1:8123', what = 'all'] = 
 const exe = { chromium: 'C:/Program Files/Google/Chrome/Application/chrome.exe', webkit: 'C:/Users/gpoli/AppData/Local/ms-playwright/webkit-2359/Playwright.exe' }[engine];
 const browser = await pw[engine].launch({ headless: true, executablePath: exe, args: engine === 'chromium' ? ['--use-angle=d3d11', '--ignore-gpu-blocklist'] : [] });
 const MAIL_STUB = "window.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('a[href^=\"mailto:\"],a[href^=\"tel:\"]');if(!a)return;(window.__mail=window.__mail||[]).push({href:a.getAttribute('href'),prevented:e.defaultPrevented});e.preventDefault();},false);";
-const G = { cloudchase: ['Cloud Chase', ['Game', 'Support', 'Privacy', 'Terms', 'Delete your data']], spellshore: ['Spell Shore', ['Game', 'For parents', 'Support', 'Privacy', 'Terms', 'Delete your data']], shaftbound: ['Shaft Bound', ['Game', 'For parents', 'Support', 'Privacy', 'Terms', 'Delete your data']] };
+const G = { cloudchase: ['Cloud Chase', ['Game', 'Support', 'Privacy', 'Terms', 'Delete your data']], spellshore: ['Spell Shore', ['Game', 'For parents', 'Support', 'Privacy', 'Terms', 'Delete your data']], shaftbound: ['Shaft Bound', ['Game', 'For parents', 'Support', 'Privacy', 'Terms', 'Delete your data']], redlanding: ['Red Landing', ['Game', 'Support', 'Privacy', 'Terms', 'Delete your data']] };
 const SUBPATH = { 'Game': '', 'For parents': 'parents/', 'Support': 'support/', 'Privacy': 'privacy/', 'Terms': 'terms/', 'Delete your data': 'delete-data/' };
-const PAGES = ['/', '/cloudchase/', '/spellshore/', '/shaftbound/', '/cloudchase/privacy/', '/cloudchase/terms/', '/cloudchase/support/', '/cloudchase/delete-data/', '/spellshore/privacy/', '/spellshore/terms/', '/spellshore/support/', '/spellshore/delete-data/', '/spellshore/parents/', '/shaftbound/privacy/', '/shaftbound/terms/', '/shaftbound/support/', '/shaftbound/delete-data/', '/shaftbound/parents/', '/legal/', '/privacy/', '/terms/', '/accessibility/', '/404.html'];
+const PAGES = ['/', '/cloudchase/', '/spellshore/', '/shaftbound/', '/cloudchase/privacy/', '/cloudchase/terms/', '/cloudchase/support/', '/cloudchase/delete-data/', '/spellshore/privacy/', '/spellshore/terms/', '/spellshore/support/', '/spellshore/delete-data/', '/spellshore/parents/', '/shaftbound/privacy/', '/shaftbound/terms/', '/shaftbound/support/', '/shaftbound/delete-data/', '/shaftbound/parents/', '/redlanding/', '/redlanding/privacy/', '/redlanding/terms/', '/redlanding/support/', '/redlanding/delete-data/', '/legal/', '/privacy/', '/terms/', '/accessibility/', '/404.html'];
 if (process.env.ONLY) { const keep = process.env.ONLY.split(','); for (let i = PAGES.length - 1; i >= 0; i--) if (!keep.includes(PAGES[i])) PAGES.splice(i, 1); }
-const TABS = ['Home', 'Cloud Chase', 'Spell Shore', 'Shaft Bound', 'Contact'];
-const TABHREF = { 'Home': '/', 'Cloud Chase': '/cloudchase/', 'Spell Shore': '/spellshore/', 'Shaft Bound': '/shaftbound/', 'Contact': '/#contact' };
+const TABS = ['Home', 'Cloud Chase', 'Spell Shore', 'Shaft Bound', 'Red Landing', 'Contact'];
+// kids and parents pages never show Red Landing (King, 14 Nov): every Spell Shore page and both parents pages
+const KIDS = (path) => path.startsWith('/spellshore/') || /\/parents\/$/.test(path);
+const tabsFor = (path) => KIDS(path) ? TABS.filter((t) => t !== 'Red Landing') : TABS;
+const TABHREF = { 'Home': '/', 'Cloud Chase': '/cloudchase/', 'Spell Shore': '/spellshore/', 'Shaft Bound': '/shaftbound/', 'Red Landing': '/redlanding/', 'Contact': '/#contact' };
 let pass = 0, fail = 0; const errs = [];
 const say = (ok, m) => { console.log((ok ? 'PASS ' : 'FAIL ') + m); ok ? pass++ : fail++; };
 async function pool(items, fn, n = 5) { let next = 0; const w = async () => { while (next < items.length) { const it = items[next++]; try { await fn(it); } catch (e) { say(false, 'test error on ' + JSON.stringify(it).slice(0, 80) + ': ' + String(e.message).split('\n')[0].slice(0, 160)); } } }; await Promise.all(Array.from({ length: n }, w)); }
@@ -25,7 +28,7 @@ async function open(path, vp) {
   page.on('console', (m) => { if (m.type() === 'error' && !/favicon/.test(m.text())) errs.push(path + ' ' + vp.w + ': ' + m.text()); });
   page.on('response', (r) => { if (r.status() >= 400) errs.push(path + ' ' + vp.w + ': HTTP ' + r.status() + ' ' + r.url()); });
   await page.goto(BASE + path, { waitUntil: 'load' });
-  await page.waitForTimeout(/^\/(|cloudchase\/|spellshore\/|shaftbound\/)$/.test(path) ? 2300 : 900);
+  await page.waitForTimeout(/^\/(|cloudchase\/|spellshore\/|shaftbound\/|redlanding\/)$/.test(path) ? 2300 : 900);
   return page;
 }
 const gameOf = (path) => { const t = path.split('/')[1]; return G[t] ? t : null; };
@@ -42,13 +45,14 @@ async function structure(path, vp) {
     const first = [...document.querySelectorAll('main h1, main .eyebrow, main .kick')].filter((e) => e.getClientRects().length && getComputedStyle(e).visibility !== 'hidden').map((e) => e.getBoundingClientRect().top).sort((a, b) => a - b)[0];
     return { mark: txt(bar.querySelector('a.mark')), markHref: bar.querySelector('a.mark').getAttribute('href'), headers: document.querySelectorAll('header').length, oldNav: document.querySelectorAll('header.nav, .brand').length,
       main: row(main), sub: row(sub), subLabel: sub ? sub.getAttribute('aria-label') : null, barBottom: Math.round(bar.getBoundingClientRect().bottom), barPos: getComputedStyle(bar).position, first: Math.round(first),
-      icon: (document.querySelector('link[rel=icon]') || {}).href, icons: document.querySelectorAll('link[rel=icon]').length, sw: document.documentElement.scrollWidth, vw: innerWidth };
+      icon: (document.querySelector('link[rel=icon]') || {}).href, rl: { text: /red landing/i.test(document.body.innerText), links: document.querySelectorAll('a[href*="redlanding"]').length }, icons: document.querySelectorAll('link[rel=icon]').length, sw: document.documentElement.scrollWidth, vw: innerWidth };
   });
   if (!d) { say(false, tag + 'no #bar'); await page.context().close(); return; }
   const tabs = d.main.links.map((l) => l.t), lit = d.main.links.filter((l) => l.on).map((l) => l.t);
   const wantLit = g ? [G[g][0]] : path === '/' ? ['Home'] : [];
   say(d.mark === 'orion lab studios' && d.markHref === '/' && d.headers === 1 && d.oldNav === 0, tag + 'one bar with the studio mark "' + d.mark + '" -> ' + d.markHref + ' (old game header gone)');
-  say(JSON.stringify(tabs) === JSON.stringify(TABS), tag + 'tabs: ' + tabs.join(' | '));
+  say(JSON.stringify(tabs) === JSON.stringify(tabsFor(path)), tag + 'tabs: ' + tabs.join(' | '));
+  if (KIDS(path)) say(!d.rl.text && d.rl.links === 0, tag + 'kids/parents page: no Red Landing anywhere (text ' + d.rl.text + ', links ' + d.rl.links + ')');
   if (path !== '/') say(d.main.links.every((l) => l.href === TABHREF[l.t]), tag + 'tab links: ' + d.main.links.map((l) => l.href).join(' '));
   say(JSON.stringify(lit) === JSON.stringify(wantLit), tag + 'highlighted tab: ' + (lit.join(',') || 'none') + ' (expected ' + (wantLit.join(',') || 'none') + ')');
   if (g) {
@@ -108,7 +112,7 @@ try {
   }
   if (what === 'taps' || what === 'all') {
     const jobs = [];
-    for (const p of PAGES) { if (p === '/') continue; jobs.push([p, 'mark', '']); for (const t of TABS) jobs.push([p, 'tab', t]); const g = gameOf(p); if (g) for (const l of G[g][1]) jobs.push([p, 'sub', l]); }
+    for (const p of PAGES) { if (p === '/') continue; jobs.push([p, 'mark', '']); for (const t of tabsFor(p)) jobs.push([p, 'tab', t]); const g = gameOf(p); if (g) for (const l of G[g][1]) jobs.push([p, 'sub', l]); }
     console.log('tap jobs: ' + jobs.length);
     await pool(jobs, tap);
   }

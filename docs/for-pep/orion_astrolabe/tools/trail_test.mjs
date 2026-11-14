@@ -5,7 +5,7 @@ const require = createRequire('file:///C:/CC/listener-ic2/node_modules/');
 const pw = require('playwright-core');
 const [, , BASE = 'http://127.0.0.1:8123', SHOTS = ''] = process.argv;
 const browser = await pw.chromium.launch({ headless: true, executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe', args: ['--use-angle=d3d11', '--ignore-gpu-blocklist'] });
-const PAGES = ['/', '/cloudchase/', '/spellshore/', '/shaftbound/', '/cloudchase/privacy/', '/cloudchase/terms/', '/cloudchase/support/', '/cloudchase/delete-data/', '/spellshore/privacy/', '/spellshore/terms/', '/spellshore/support/', '/spellshore/delete-data/', '/spellshore/parents/', '/shaftbound/privacy/', '/shaftbound/terms/', '/shaftbound/support/', '/shaftbound/delete-data/', '/shaftbound/parents/', '/legal/', '/privacy/', '/terms/', '/accessibility/', '/404.html'];
+const PAGES = ['/', '/cloudchase/', '/spellshore/', '/shaftbound/', '/redlanding/', '/redlanding/privacy/', '/cloudchase/privacy/', '/cloudchase/terms/', '/cloudchase/support/', '/cloudchase/delete-data/', '/spellshore/privacy/', '/spellshore/terms/', '/spellshore/support/', '/spellshore/delete-data/', '/spellshore/parents/', '/shaftbound/privacy/', '/shaftbound/terms/', '/shaftbound/support/', '/shaftbound/delete-data/', '/shaftbound/parents/', '/legal/', '/privacy/', '/terms/', '/accessibility/', '/404.html'];
 let fails = 0, passes = 0; const errs = [];
 const say = (ok, m) => { console.log((ok ? 'PASS ' : 'FAIL ') + m); ok ? passes++ : fails++; };
 // how much of the trail canvas is painted, and the brightest clusters (a rough star count)
@@ -18,7 +18,7 @@ async function onePage(w, h, path) {
     const page = await ctx.newPage();
     page.on('pageerror', (e) => errs.push(path + ' ' + w + ': ' + e.message));
     page.on('console', (m) => { if (m.type() === 'error' && !/favicon/.test(m.text())) errs.push(path + ' ' + w + ': ' + m.text()); });
-    await page.goto(BASE + path, { waitUntil: 'load' }); await page.waitForTimeout(path === '/' || /^\/(cloudchase|spellshore|shaftbound)\/$/.test(path) ? 2200 : 700);
+    await page.goto(BASE + path, { waitUntil: 'load' }); await page.waitForTimeout(path === '/' || /^\/(cloudchase|spellshore|shaftbound|redlanding)\/$/.test(path) ? 2200 : 700);
     const pre = await page.evaluate(() => ({ trail: !!document.getElementById('trail'), reticle: !!document.querySelector('.reticle'), cls: document.documentElement.className }));
     // a wandering path across the open middle of the page
     const pts = []; for (let i = 0; i <= 26; i++) pts.push([Math.round(w * (0.22 + 0.56 * i / 26)), Math.round(h * (0.5 + 0.16 * Math.sin(i / 2.2)))]);

@@ -2,6 +2,19 @@
 
 Built on branch `job/orion-astrolabe`. **Live on `main` since 13 Nov (Pep's yes).** The phone fixes and the constellation trail (branch `job/astrolabe-phone-fixes`) went to `main` on 14 Nov with King's yes. The site is at orionlabstudio.com.
 
+## Red Landing added (14 Nov)
+
+Branch `job/red-landing`. Facts from `C:\CC\_reports\redlanding-facts.md` (written by the Red Landing chat); nothing else was used.
+
+1. **A fourth ring on the astrolabe.** Ring IV, Red Landing, in the game's moon red (`#e2442b`, its moon `#f05a3a`, the game's own palette). Its medallion is title look A as a constellation: a red moon on the right over a plane's tail fin on the left (the fuselage's end, a tall swept fin with a squared tip, the stabiliser at its foot), drawn in the game's star colour. To make room, every medallion moved out a little (`BADGE_R` 1.88 to 1.96) so none sits on the new ring.
+2. **Its stop on the home page** after Shaft Bound, with the tagline, the description, the tags (Horror adventure, iPhone, Android, Coming soon) and "Paid game: $2.99 in the US, prices vary by country". On a computer the card also says "For teens and up (13+)"; on a phone that sentence is left off (the card is already the tallest) and the medallion sits a little higher. Everything after the Shaft Bound stop moved on by 1.7 screens (the closing view, the fade at the end; `TRACK` 13.4 to 15.1). "Eight parts" is now "Nine parts", the cards count 01-04 / 04, and the close says "Four worlds, one sky". The home footer has a Red Landing column. The new hash `/#redlanding` lands on the stop.
+3. **A Red Landing tab** in the top bar of every page **except the kids and parents pages**: all six Spell Shore pages and the Shaft Bound parents page show no tab and mention Red Landing nowhere (the bar test checks this, and was shown to fail when the tab was put on the Spell Shore parents page on purpose). With six tabs the row is longer, so the tabs sit a little closer from 1061 to 1300 px wide, and the two-row bar (the mark above a sideways-scrolling tab row) now starts at 1060 px instead of 1000 px; every width from 1061 to 1440 was measured to fit on one row.
+4. **`/redlanding/`** in the same family style as the other game pages, with its own red sky (moon glow high right, ember low left, a blood-red haze low down; the stars there are moon red, ember and the game's star colour). It shows the price, a clear age guidance box ("Made for teens and up (13+)", with every item from the facts file's "what a parent should know" list), what you do, and "coming soon". **Privacy, terms, support and delete-your-data pages** follow the Cloud Chase pages' structure and say only what the facts file says: everything stays on the device, nothing is sent or shared, no account, no ads, no in-app purchases; payments and refunds go through Apple or Google.
+5. **Left out on purpose:** the faint symbol on the moon (the facts file says leave it out of marketing), and the game's Anton title font (we use only the site's own fonts).
+6. **Studio legal pages and footers** (website privacy, terms, legal notice, accessibility, and the trademark line in the footers) still list three games: their visible text was to stay unchanged. Adding Red Landing there is a legal-text change for King to approve.
+7. **Wrong Voice:** the old page was never on `main` or the live site; it exists only on the unmerged branch `task/wrong-voice-page`. No "Wrong Voice" or "Red Moon" game name is anywhere on the site.
+8. **The leftover star script is gone:** `astro/docpage.js` (the four studio pages drew their background stars twice) is deleted; the pages look identical because `sky.js` was drawing over it.
+
 ## Sound removed (14 Nov)
 
 Branch `job/no-sound`. King decided the site does not need sound.

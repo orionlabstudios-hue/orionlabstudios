@@ -2,7 +2,7 @@
 //   node csp_check.mjs <chromium|webkit> <baseUrl>
 // Per page, at 1440x900 and on an emulated iPhone 13 (390): the CSP meta is there (right after charset) and the
 // browser enforces it; the referrer meta is there; ZERO securitypolicyviolation events and ZERO "Refused"/CSP console
-// messages; the head script ran (no-js removed / astro-on when WebGL); studio pages reveal all .rv text (docpage.js);
+// messages; the head script ran (no-js removed / astro-on when WebGL); studio pages run without the old docpage.js;
 // game and home pages start the instrument canvas. Home: Sound on fetches the 4 sound slots (404 expected, but the
 // requests must reach the server, i.e. not be blocked by connect-src).
 // SELF-TEST first: the same real page served with one hash removed from its policy, and with an extra inline script,
@@ -13,8 +13,8 @@ const pw = require('playwright-core');
 const [, , engine = 'chromium', BASE = 'http://127.0.0.1:8123'] = process.argv;
 const exe = { chromium: 'C:/Program Files/Google/Chrome/Application/chrome.exe', webkit: 'C:/Users/gpoli/AppData/Local/ms-playwright/webkit-2359/Playwright.exe' }[engine];
 const browser = await pw[engine].launch({ headless: true, executablePath: exe, args: engine === 'chromium' ? ['--use-angle=d3d11', '--ignore-gpu-blocklist'] : [] });
-const PAGES = ['/', '/cloudchase/', '/spellshore/', '/shaftbound/', '/legal/', '/privacy/', '/terms/', '/accessibility/', '/404.html'];
-for (const g of ['cloudchase', 'spellshore', 'shaftbound']) for (const s of ['privacy', 'terms', 'support', 'delete-data']) PAGES.push('/' + g + '/' + s + '/');
+const PAGES = ['/', '/cloudchase/', '/spellshore/', '/shaftbound/', '/redlanding/', '/legal/', '/privacy/', '/terms/', '/accessibility/', '/404.html'];
+for (const g of ['cloudchase', 'spellshore', 'shaftbound', 'redlanding']) for (const s of ['privacy', 'terms', 'support', 'delete-data']) PAGES.push('/' + g + '/' + s + '/');
 for (const g of ['spellshore', 'shaftbound']) PAGES.push('/' + g + '/parents/');
 const MAIL_STUB = "window.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('a[href^=\"mailto:\"],a[href^=\"tel:\"]');if(!a)return;(window.__mail=window.__mail||[]).push({href:a.getAttribute('href'),prevented:e.defaultPrevented});e.preventDefault();},false);";
 const CSP_SPY = "window.__csp=[];document.addEventListener('securitypolicyviolation',function(e){window.__csp.push(e.violatedDirective+' '+(e.blockedURI||'')+' '+(e.sample||''))},true);";
@@ -75,7 +75,7 @@ await pool(jobs, async ([path, w]) => {
   rec(tag + ' policy', !!head.csp && /default-src 'self'/.test(head.csp) && /object-src 'none'/.test(head.csp) && /base-uri 'self'/.test(head.csp) && /form-action 'self'/.test(head.csp) && /connect-src 'self'/.test(head.csp) && /img-src 'self' data:/.test(head.csp) && /font-src 'self'/.test(head.csp) && !/unsafe-eval/.test(head.csp) && !/script-src[^;]*unsafe-inline/.test(head.csp));
   rec(tag + ' referrer strict-origin-when-cross-origin', head.ref === 'strict-origin-when-cross-origin');
   rec(tag + ' head script ran (no "no-js" left)', !/\bno-js\b/.test(head.cls), head.cls);
-  if (['/', '/cloudchase/', '/spellshore/', '/shaftbound/'].includes(path)) {
+  if (['/', '/cloudchase/', '/spellshore/', '/shaftbound/', '/redlanding/'].includes(path)) {
     const on = /astro-on/.test(head.cls);
     rec(tag + ' instrument on (astro-on)', on);
     if (on) { await page.waitForTimeout(1500); const gl = await page.evaluate(() => { const c = document.querySelector('canvas'); return c ? c.width + 'x' + c.height : 'none'; }); rec(tag + ' instrument canvas sized', gl !== 'none' && !/^0x|x0$/.test(gl), gl); }
@@ -86,7 +86,7 @@ await pool(jobs, async ([path, w]) => {
     const rv = await page.evaluate(() => [document.querySelectorAll('.rv').length, document.querySelectorAll('.rv.in').length]);
     rec(tag + ' reveal text shown (none on these pages today)', rv[0] === rv[1], rv[1] + '/' + rv[0]);
     rec(tag + ' no page errors', !page.cons.some(c => /PAGEERROR/.test(c)));
-    rec(tag + ' docpage.js loaded 200', page.reqs.some(r => r === '200 ' + BASE + '/astro/docpage.js'));
+    rec(tag + ' the old duplicate star script (docpage.js, removed 14 Nov) is not requested', !page.reqs.some(r => /docpage\.js/.test(r)));
   }
   if (path === '/' && w === 1440) {
     // the policy's connect-src, probed directly: a same-site file is fetched, an outside address is refused

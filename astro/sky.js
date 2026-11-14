@@ -3,7 +3,7 @@
    - On a computer they lean toward the mouse; on a phone they drift slowly by themselves (no motion permission).
    - Fast scrolling streaks them (AstroSky.kick(velocity) is called by astro.js; on other pages the scroll itself does it).
    - With "reduce motion" on they are drawn once and stay still.
-   Tint: <body data-sky="cc|ss|sb"> picks the page's colour; anything else is the studio's. */
+   Tint: <body data-sky="cc|ss|sb|rl"> picks the page's colour; anything else is the studio's. */
 (function () {
   'use strict';
   var win = window, doc = document;
@@ -16,7 +16,8 @@
     studio: ['255,214,170', '190,205,255', '255,248,235'],
     cc: ['190,228,255', '255,226,200', '240,248,255'],
     ss: ['150,255,226', '255,224,150', '235,255,250'],
-    sb: ['255,200,130', '255,236,190', '255,244,228']
+    sb: ['255,200,130', '255,236,190', '255,244,228'],
+    rl: ['240,90,58', '255,138,60', '230,225,215']   // Red Landing: moon red, ember, and the game's own star colour
   };
   var key = (doc.body && doc.body.getAttribute('data-sky')) || 'studio';
   var tint = TINTS[key] || TINTS.studio;
