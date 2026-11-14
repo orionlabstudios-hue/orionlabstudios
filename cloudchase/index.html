@@ -176,10 +176,16 @@ footer a:hover{color:var(--text)}
 .pill:focus-visible,.card:focus-visible{border-radius:999px}
 .card:focus-visible{border-radius:18px}
 </style>
-<link rel="stylesheet" href="/story.css">
+<link rel="preload" href="/fonts/Orbitron-Medium-latin.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="stylesheet" href="/astro/astro.css">
+<script>(function(d){try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&window.WebGLRenderingContext)d.classList.add('astro-on')}catch(e){}})(document.documentElement)</script>
 </head>
-<body class="story g-cc">
+<body class="astro g-cc" data-astro="game" data-game="cc" data-sky="cc">
 <canvas id="sky" aria-hidden="true"></canvas>
+<canvas id="astro" aria-hidden="true"></canvas>
+<canvas id="astro-hud" aria-hidden="true"></canvas>
+<div id="astro-labels" aria-hidden="true"></div>
+<div class="astro-flash" aria-hidden="true"></div>
 <header class="nav"><div class="wrap"><a class="brand" href="../cloudchase/">Cloud <span>Chase</span></a><nav aria-label="Main"><ul><li><a class="link" href="../cloudchase/" aria-current="page">Game</a></li><li><a class="link" href="../cloudchase/support/">Support</a></li><li><a class="link" href="../">Studio</a></li></ul></nav></div></header>
 <main>
 
@@ -192,15 +198,12 @@ footer a:hover{color:var(--text)}
     <div class="cta">
       <span class="pill primary">App Store <small>coming soon</small></span>
       <span class="pill primary">Google Play <small>coming soon</small></span>
-      <a class="pill" href="https://www.instagram.com/cloudchasegame" rel="noopener">Follow <small>@cloudchasegame</small></a>
     </div>
   </div>
 <div class="scrollcue" aria-hidden="true"></div>
 </section>
 <section class="gpin" data-gpin aria-label="Cloud Chase, in three lines">
   <div class="gstage">
-    <div class="pscene sc-cc"><div class="sun"></div><div class="puff p3"></div><div class="puff p1"></div><div class="puff p2"></div><div class="road"></div></div>
-    <div class="gshade"></div>
     <div class="glines"><p class="gline">An impossible road <em>above a drowned world.</em></p><p class="gline">Eighty-one levels, <em>from the first temple to the last tower.</em></p><p class="gline">One girl, <em>and a sky that remembers.</em></p></div>
     <p class="gkey" aria-hidden="true">Cloud Chase</p>
   </div>
@@ -248,7 +251,6 @@ footer a:hover{color:var(--text)}
     <h2>Be there when it lands.</h2>
     <p class="big">Cloud Chase is coming to iPhone and Android. Follow along for the launch date.</p>
     <ul>
-      <li><a class="pill primary" href="https://www.instagram.com/cloudchasegame" rel="noopener">Instagram <small>@cloudchasegame</small></a></li>
       <li><a class="pill" href="support/">Support</a></li>
       <li><a class="pill" href="privacy/">Privacy</a></li>
     </ul>
@@ -258,6 +260,8 @@ footer a:hover{color:var(--text)}
 </main>
 <div class="ramp" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
 <footer><div class="wrap"><span>&copy; 2026 Orion Lab Studios LLC, a Wyoming limited liability company</span><nav aria-label="Footer"><a href="../cloudchase/support/">Support</a><a href="../cloudchase/privacy/">Privacy</a><a href="../cloudchase/delete-data/">Delete your data</a><a href="../cloudchase/terms/">Terms</a><a href="../">Orion Lab Studios</a></nav></div></footer>
-<script src="/story.js" defer></script>
+<script src="/astro/stars.js" defer></script>
+<script src="/astro/sky.js" defer></script>
+<script src="/astro/astro.js" defer></script>
 </body>
 </html>

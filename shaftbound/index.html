@@ -186,10 +186,16 @@ footer a:hover{color:var(--text)}
 .doc a{border-bottom-color:rgba(230,180,90,.35)}
 .ramp.sb i{background:#E6B45A}.ramp.sb i:nth-child(3n+2){background:#7FE9F2}.ramp.sb i:nth-child(3n){background:#F1E4C8}
 </style>
-<link rel="stylesheet" href="/story.css">
+<link rel="preload" href="/fonts/Orbitron-Medium-latin.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="stylesheet" href="/astro/astro.css">
+<script>(function(d){try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&window.WebGLRenderingContext)d.classList.add('astro-on')}catch(e){}})(document.documentElement)</script>
 </head>
-<body class="story g-sb">
+<body class="astro g-sb" data-astro="game" data-game="sb" data-sky="sb">
 <canvas id="sky" aria-hidden="true"></canvas>
+<canvas id="astro" aria-hidden="true"></canvas>
+<canvas id="astro-hud" aria-hidden="true"></canvas>
+<div id="astro-labels" aria-hidden="true"></div>
+<div class="astro-flash" aria-hidden="true"></div>
 <header class="nav"><div class="wrap"><a class="brand" href="../shaftbound/">Shaft <span>Bound</span></a><nav aria-label="Main"><ul><li><a class="link" href="../shaftbound/" aria-current="page">Game</a></li><li><a class="link" href="../shaftbound/parents/">Parents</a></li><li><a class="link" href="../shaftbound/support/">Support</a></li><li><a class="link" href="../">Studio</a></li></ul></nav></div></header>
 <main>
 
@@ -209,8 +215,6 @@ footer a:hover{color:var(--text)}
 </section>
 <section class="gpin" data-gpin aria-label="Shaft Bound, in three lines">
   <div class="gstage">
-    <div class="pscene sc-sb"><div class="shaft"></div><div class="vein v1"></div><div class="vein v2"></div><div class="vein v3"></div><div class="crystal k1"></div><div class="crystal k2"></div><div class="crystal k3"></div></div>
-    <div class="gshade"></div>
     <div class="glines"><p class="gline">Dig <em>your own tunnels.</em></p><p class="gline">Defend them from <em>what lives below.</em></p><p class="gline">Build an <em>underground empire.</em></p></div>
     <p class="gkey" aria-hidden="true">Shaft Bound</p>
   </div>
@@ -274,6 +278,8 @@ footer a:hover{color:var(--text)}
 </main>
 <div class="ramp sb" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
 <footer><div class="wrap"><span>&copy; 2026 Orion Lab Studios LLC, a Wyoming limited liability company</span><nav aria-label="Footer"><a href="../shaftbound/parents/">For parents</a><a href="../shaftbound/support/">Support</a><a href="../shaftbound/privacy/">Privacy</a><a href="../shaftbound/delete-data/">Delete data</a><a href="../shaftbound/terms/">Terms</a><a href="../">Orion Lab Studios</a></nav></div></footer>
-<script src="/story.js" defer></script>
+<script src="/astro/stars.js" defer></script>
+<script src="/astro/sky.js" defer></script>
+<script src="/astro/astro.js" defer></script>
 </body>
 </html>

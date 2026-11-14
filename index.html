@@ -17,118 +17,103 @@
 <link rel="preload" href="/fonts/cormorant-garamond-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/Orbitron-Medium-latin.ttf" as="font" type="font/ttf" crossorigin>
 <link rel="stylesheet" href="/studio.css">
-<link rel="stylesheet" href="/story.css">
-<script>document.documentElement.classList.remove('no-js')</script>
+<link rel="stylesheet" href="/astro/astro.css">
+<script>(function(d){d.classList.remove('no-js');try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&window.WebGLRenderingContext)d.classList.add('astro-on')}catch(e){}})(document.documentElement)</script>
 </head>
-<body class="story">
+<body class="astro" data-astro="home" data-sky="studio">
 <canvas id="sky" aria-hidden="true"></canvas>
+<canvas id="astro" aria-hidden="true"></canvas>
+<canvas id="astro-hud" aria-hidden="true"></canvas>
+<div id="astro-labels" aria-hidden="true"></div>
+<div class="astro-flash" aria-hidden="true"></div>
 <a class="skip" href="#main">Skip to content</a>
 <header class="bar" id="bar">
   <div class="wrap">
     <a class="mark" href="/" aria-label="Orion Lab Studios home"><svg viewBox="0 0 26 26" aria-hidden="true"><g stroke="rgba(241,236,226,.45)" stroke-width=".8" fill="none"><path d="M7 5 L11 12 L13 11.6 L15 11.2 L19 6 M11 12 L8 21 M15 11.2 L19.5 20"/></g><g fill="#FFF6E0"><circle cx="7" cy="5" r="1.7"/><circle cx="19" cy="6" r="1.3"/><circle cx="11" cy="12" r="1"/><circle cx="13" cy="11.6" r="1"/><circle cx="15" cy="11.2" r="1"/><circle cx="8" cy="21" r="1.2"/><circle cx="19.5" cy="20" r="1.6"/></g></svg><span>orion <i>lab<span class="full"> studios</span></i></span></a>
-    <nav aria-label="Main"><ul><li><a href="/#games">Games</a></li><li class="opt"><a href="/#studio">Studio</a></li><li class="opt"><a href="/#promise">Promise</a></li><li><a href="/#contact">Contact</a></li></ul></nav>
+    <nav aria-label="Games"><ul class="tabs"><li><a href="#cloudchase" data-tab="cc">Cloud Chase</a></li><li><a href="#spellshore" data-tab="ss">Spell Shore</a></li><li><a href="#shaftbound" data-tab="sb">Shaft Bound</a></li><li><a href="#contact" data-tab="contact">Contact</a></li></ul></nav>
   </div>
 </header>
 <main id="main">
-<section class="hero" aria-label="Orion Lab Studios">
-  <div class="wrap">
-    <p class="eyebrow">Independent game studio</p>
-    <h1>orion<em>lab studios</em></h1>
-    <p class="lede">We make small games with big skies: story, atmosphere and a road worth running.</p>
-    <div class="row">
-      <a class="btn solid" href="#games">See our worlds <span class="ar" aria-hidden="true">→</span></a>
-      <a class="btn" href="#contact">Say hello</a>
-    </div>
-  </div>
-  <div class="scrollcue" aria-hidden="true"></div>
-</section>
+<div class="track" data-track>
+  <section class="stop" data-stop="hero" data-win="-1,-0.5,0.45,0.85" aria-label="Orion Lab Studios">
+    <div class="wrap"><div class="card">
+      <span class="kick">Independent game studio</span>
+      <h1>orion<em>lab studios</em></h1>
+      <p class="lede">We make small games with big skies: story, atmosphere and a road worth running.</p>
+      <div class="row">
+        <a class="btn solid" href="#cloudchase" data-tab-link="cc">See our worlds <span class="ar" aria-hidden="true">&rarr;</span></a>
+        <a class="btn" href="#contact">Say hello</a>
+      </div>
+      <span class="hint" aria-hidden="true">Scroll to take the instrument apart</span>
+    </div></div>
+  </section>
 
-<section class="intro" data-intro aria-label="The constellation Orion lights up one star at a time. Three of its stars draw the letters O, L and S, and the studio's name appears.">
-  <div class="stage">
-    <canvas class="ic" aria-hidden="true"></canvas>
-    <div class="ols-cap" aria-hidden="true">
-      <p><small>Orion</small>Seven stars, lit one by one.</p>
-      <p><small>The belt</small>Three of them leave the line and draw our initials.</p>
-    </div>
-    <div class="ols-word"><i></i><b>Orion Lab Studios</b><i></i></div>
-  </div>
-</section>
+  <section class="stop" data-stop="parts" data-win="1.15,1.5,2.7,3.0" aria-label="The Orion Astrolabe">
+    <div class="wrap"><div class="card">
+      <span class="kick">The Orion Astrolabe &middot; exploded view</span>
+      <h2>Eight parts. <em>One sky.</em></h2>
+      <p class="small">Every star on the base plate is a real star, in its real place.</p>
+    </div></div>
+  </section>
 
-<section class="stmts" aria-label="About the studio">
-  <div class="stmt"><p>We make small games <em>with big skies.</em></p></div>
-  <div class="stmt"><p>Light, music and weather <em>tell the story.</em></p></div>
-  <div class="stmt"><p>Made for <em>every phone,</em> not just the newest.</p></div>
-  <div class="stmt long"><p>Clear prices. Honest rewards. <em>No tricks.</em></p></div>
-  <div class="stmt"><p>Three worlds, <em>one sky.</em></p></div>
-</section>
-
-<section class="panels" id="games" aria-label="Our games">
-  <article class="panel" aria-labelledby="w-cloudchase">
-    <div class="pin">
-      <div class="pscene sc-cc"><div class="sun"></div><div class="puff p3"></div><div class="puff p1"></div><div class="puff p2"></div><div class="road"></div></div>
-      <div class="pshade"></div>
-      <div class="pcopy"><div class="wrap">
-        <span class="num">01 / 03</span>
-        <h3 id="w-cloudchase">Cloud Chase</h3>
-        <p class="tag">An adventure above the clouds.</p>
-        <p class="d">A story runner set on an impossible road above a drowned world. Eighty-one levels, one girl, and a sky that remembers.</p>
-        <div class="meta"><span class="chip">Story runner</span><span class="chip">iPhone</span><span class="chip">Android</span><span class="chip">Coming soon</span></div>
-        <a class="btn solid" href="/cloudchase/">Visit Cloud Chase <span class="ar" aria-hidden="true">→</span></a>
-      </div></div>
-    </div>
-    <div class="pveil"></div>
-  </article>
-  <article class="panel" aria-labelledby="w-spellshore">
-    <div class="pin">
-      <div class="pscene sc-ss"><div class="sun"></div><div class="palm"></div><div class="isle"></div><div class="wave w1"></div><div class="wave w2"></div></div>
-      <div class="pshade"></div>
-      <div class="pcopy"><div class="wrap">
-        <span class="num">02 / 03</span>
-        <h3 id="w-spellshore">Spell Shore</h3>
-        <p class="tag">Spell. Fish. Build. Defend.</p>
-        <p class="d">A cozy island adventure for kids: spell the picture to catch fish, grow your island, and keep the pirates off the beach at night.</p>
-        <div class="meta"><span class="chip">Spelling adventure for kids</span><span class="chip">iPhone</span><span class="chip">Android</span><span class="chip">Coming soon</span></div>
-        <a class="btn solid" href="/spellshore/">Visit Spell Shore <span class="ar" aria-hidden="true">→</span></a>
-      </div></div>
-    </div>
-    <div class="pveil"></div>
-  </article>
-  <article class="panel" aria-labelledby="w-shaftbound">
-    <div class="pin">
-      <div class="pscene sc-sb"><div class="shaft"></div><div class="vein v1"></div><div class="vein v2"></div><div class="vein v3"></div><div class="crystal k1"></div><div class="crystal k2"></div><div class="crystal k3"></div></div>
-      <div class="pshade"></div>
-      <div class="pcopy"><div class="wrap">
-        <span class="num">03 / 03</span>
-        <h3 id="w-shaftbound">Shaft Bound</h3>
-        <p class="tag">Dig. Defend. Go deeper.</p>
-        <p class="d">A mining adventure for everyone: dig your own tunnels, defend them from what lives below, and build an underground empire.</p>
-        <div class="meta"><span class="chip">Mining adventure</span><span class="chip">iPhone</span><span class="chip">Android</span><span class="chip">Coming soon</span></div>
-        <a class="btn solid" href="/shaftbound/">Visit Shaft Bound <span class="ar" aria-hidden="true">→</span></a>
-      </div></div>
-    </div>
-    <div class="pveil"></div>
-  </article>
-</section>
-
-<section class="s" id="studio" style="padding-top:clamp(88px,13vw,170px)">
-  <div class="wrap">
-    <div class="head rv">
+  <section class="stop" id="studio" data-stop="orion" data-win="3.45,3.75,4.65,4.95">
+    <div class="wrap"><div class="card">
+      <span class="kick">The studio</span>
       <h2>Three stars,<br><em>one straight line.</em></h2>
-      <p>Orion's Belt rises almost exactly due east and sets due west, and for thousands of years travelers have used its three stars, Alnitak, Alnilam and Mintaka, to find their way. That is the studio we want to be: easy to find, steady, and honest about where we're headed. Every game we make should be something you can trust to lead you somewhere good.</p>
-    </div>
-    <div class="principles rv">
-      <div><span class="eyebrow">I</span><h3>Atmosphere first</h3><p>Light, music and weather do as much storytelling as words. If a place doesn't feel alive, it isn't finished.</p></div>
-      <div><span class="eyebrow">II</span><h3>Made for every phone</h3><p>We tune for older and cheaper phones, not just the newest ones, so everyone gets the same game.</p></div>
-      <div><span class="eyebrow">III</span><h3>Fair to players</h3><p>Clear prices, honest rewards and no tricks. A game should earn your time, not trap it.</p></div>
-    </div>
+      <p class="d">Orion's Belt rises almost exactly due east and sets due west, and for thousands of years travelers have used its three stars, Alnitak, Alnilam and Mintaka, to find their way. That is the studio we want to be: easy to find, steady, and honest about where we're headed. Every game we make should be something you can trust to lead you somewhere good.</p>
+    </div></div>
+  </section>
 
-    <div class="promise rv" id="promise">
+  <span id="games" class="anchor" aria-hidden="true"></span>
+  <article class="stop game" id="cloudchase" data-stop="cc" data-win="6.25,6.55,7.3,7.6" aria-labelledby="w-cloudchase">
+    <div class="wrap"><div class="card">
+      <span class="num">Ring I &middot; 01 / 03</span>
+      <h2 id="w-cloudchase">Cloud Chase</h2>
+      <p class="tag">An adventure above the clouds.</p>
+      <p class="d">A story runner set on an impossible road above a drowned world. Eighty-one levels, one girl, and a sky that remembers.</p>
+      <div class="meta"><span class="chip">Story runner</span><span class="chip">iPhone</span><span class="chip">Android</span><span class="chip">Coming soon</span></div>
+      <div class="row"><a class="btn solid" href="/cloudchase/" data-dive="cc">Visit Cloud Chase <span class="ar" aria-hidden="true">&rarr;</span></a></div>
+    </div></div>
+  </article>
+
+  <article class="stop game" id="spellshore" data-stop="ss" data-win="8.0,8.3,9.0,9.3" aria-labelledby="w-spellshore">
+    <div class="wrap"><div class="card">
+      <span class="num">Ring II &middot; 02 / 03</span>
+      <h2 id="w-spellshore">Spell Shore</h2>
+      <p class="tag">Spell. Fish. Build. Defend.</p>
+      <p class="d">A cozy island adventure for kids: spell the picture to catch fish, grow your island, and keep the pirates off the beach at night.</p>
+      <div class="meta"><span class="chip">Spelling adventure for kids</span><span class="chip">iPhone</span><span class="chip">Android</span><span class="chip">Coming soon</span></div>
+      <div class="row"><a class="btn solid" href="/spellshore/" data-dive="ss">Visit Spell Shore <span class="ar" aria-hidden="true">&rarr;</span></a></div>
+    </div></div>
+  </article>
+
+  <article class="stop game" id="shaftbound" data-stop="sb" data-win="9.7,10.0,10.7,11.0" aria-labelledby="w-shaftbound">
+    <div class="wrap"><div class="card">
+      <span class="num">Ring III &middot; 03 / 03</span>
+      <h2 id="w-shaftbound">Shaft Bound</h2>
+      <p class="tag">Dig. Defend. Go deeper.</p>
+      <p class="d">A mining adventure for everyone: dig your own tunnels, defend them from what lives below, and build an underground empire.</p>
+      <div class="meta"><span class="chip">Mining adventure</span><span class="chip">iPhone</span><span class="chip">Android</span><span class="chip">Coming soon</span></div>
+      <div class="row"><a class="btn solid" href="/shaftbound/" data-dive="sb">Visit Shaft Bound <span class="ar" aria-hidden="true">&rarr;</span></a></div>
+    </div></div>
+  </article>
+
+  <section class="stop" data-stop="close" data-win="11.75,12.05,12.7,13.1" aria-label="Three worlds">
+    <div class="wrap"><div class="card">
+      <h2>Three worlds, <em>one sky.</em></h2>
+    </div></div>
+  </section>
+</div>
+
+<div class="after">
+<section class="s" id="promise">
+  <div class="wrap">
+    <div class="promise">
       <p class="eyebrow">Our promise to players and parents</p>
       <h3>Play should be safe. Here is what we hold ourselves to.</h3>
       <ul class="plist">
         <li><span><b>We never sell your data.</b> Not to advertisers, not to anyone.</span></li>
         <li><span><b>No personalized ads.</b> The ads in our games don't build a profile of you.</span></li>
-        <li><span><b>Kid-safe by design.</b> Our games follow children's privacy rules (COPPA in the U.S., GDPR-K in Europe).</span></li>
         <li><span><b>Clear prices.</b> Every purchase says exactly what you get before you pay.</span></li>
         <li><span><b>Your data, your call.</b> Every game has a page to delete your data, and we answer within 30 days.</span></li>
         <li><span><b>Plain-language policies.</b> Each game has its own privacy policy and terms, linked below.</span></li>
@@ -138,16 +123,13 @@
 </section>
 
 <section class="s contact" id="contact" style="padding-top:0">
-  <div class="wrap rv">
+  <div class="wrap">
     <p class="eyebrow">Contact</p>
     <h2 class="head" style="display:block;margin-bottom:24px"><span style="font-family:var(--serif);font-weight:400;font-size:clamp(44px,7vw,92px);line-height:.95">Say <em style="color:var(--muted)">hello.</em></span></h2>
     <a class="big" href="mailto:support@orionlabstudio.com">support@orionlabstudio.com</a>
-    <div class="row">
-      <a class="btn" href="https://www.instagram.com/orionlabstudios" rel="noopener noreferrer">Instagram · @orionlabstudios</a>
-      <a class="btn" href="https://www.instagram.com/cloudchasegame" rel="noopener noreferrer">Instagram · @cloudchasegame</a>
-    </div>
   </div>
 </section>
+</div>
 </main>
 <footer class="f">
   <div class="wrap">
@@ -166,6 +148,10 @@
     </div>
   </div>
 </footer>
-<script src="/story.js" defer></script>
+<div class="dial" aria-hidden="true"><svg viewBox="0 0 64 64"><circle class="d0" cx="32" cy="32" r="29"/><circle cx="32" cy="32" r="26"/><circle class="dial-arc" cx="32" cy="32" r="26" stroke-dasharray="163.4" stroke-dashoffset="163.4" transform="rotate(-90 32 32)"/><circle cx="32" cy="32" r="16"/><path d="M32 12 L32 52 M12 32 L52 32" opacity=".35"/><g class="dial-needle"><line x1="32" y1="36" x2="32" y2="9"/><circle cx="32" cy="9" r="2"/></g><circle class="hub" cx="32" cy="32" r="2.6"/></svg></div>
+<button class="snd" type="button" data-sound aria-pressed="false" hidden><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6h3l4-3v10L5 10H2z" fill="currentColor"/><path class="w" d="M11 5.5a3.5 3.5 0 0 1 0 5M12.8 3.6a6 6 0 0 1 0 8.8" fill="none" stroke="currentColor" stroke-width="1.2"/></svg><span class="st">Sound off</span></button>
+<script src="/astro/stars.js" defer></script>
+<script src="/astro/sky.js" defer></script>
+<script src="/astro/astro.js" defer></script>
 </body>
 </html>
