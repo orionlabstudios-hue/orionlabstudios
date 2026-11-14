@@ -91,7 +91,7 @@ async function suiteHome() {
       const href = c.href || '';
       if (c.dive) { ok = url.pathname === href; note = 'dived to ' + url.pathname; }
       else if (c.tab || c.tabLink) {
-        const want = { home: 0, cc: 6.85 * vh, ss: 8.6 * vh, sb: 10.3 * vh }[c.tab || c.tabLink];
+        const want = { home: 0, cc: 6.85 * vh, ss: 8.6 * vh, sb: 10.3 * vh, rl: 12.0 * vh }[c.tab || c.tabLink];
         if (c.tab === 'contact') { const r = await page.evaluate("Math.round(document.getElementById('contact').getBoundingClientRect().top)"); ok = r > -40 && r < vh * 0.6; note = 'contact top at ' + r; }
         else { ok = Math.abs(y1 - want) < 14 && url.pathname === '/'; note = 'scroll ' + y1 + ' (want ' + Math.round(want) + ') path ' + url.pathname; }
       }
@@ -125,7 +125,7 @@ async function suiteRings() {
     await page.context().close();
   }
   // b) at each game stop: a tap on the sky over its medallion dives into that game; taps on its card text never do
-  for (const [k, s, path] of [['cc', 6.85, '/cloudchase/'], ['ss', 8.6, '/spellshore/'], ['sb', 10.3, '/shaftbound/']]) {
+  for (const [k, s, path] of [['cc', 6.85, '/cloudchase/'], ['ss', 8.6, '/spellshore/'], ['sb', 10.3, '/shaftbound/'], ['rl', 12.0, '/redlanding/']]) {
     const page = await fresh('/'); await scrollTo(page, Math.round(s * vh));
     let hit = null, n = 0; const [y0, y1] = await skyBand(page);
     outer: for (let y = y0; y < y1; y += 12) for (let x = 10; x < vw; x += 12) {
@@ -152,12 +152,12 @@ async function suiteRings() {
   // c) the hidden stops' cards cover nothing, at EVERY stop: no point of the screen belongs to a card that is not on screen
   {
     const page = await fresh('/'); const bad = [];
-    for (const s of [0, 2, 4.2, 6.85, 8.6, 10.3, 12.3]) {
+    for (const s of [0, 2, 4.2, 6.85, 8.6, 10.3, 12.0, 14.0]) {
       await scrollTo(page, Math.round(s * vh));
       const r = await page.evaluate(() => { const o = []; for (let y = 100; y < innerHeight; y += 30) for (let x = 14; x < innerWidth; x += 30) { const e = document.elementFromPoint(x, y); const st = e && e.closest('[data-stop]'); if (st && !st.classList.contains('live') && +st.style.opacity < 0.5 && !(st.getAttribute('data-stop') === 'hero' && +st.style.opacity >= 0.5)) o.push(st.getAttribute('data-stop') + '@' + x + ',' + y); } return o; });
       if (r.length) bad.push('s=' + s + ': ' + r.slice(0, 3).join(' '));
     }
-    rec('at 7 scroll positions no point of the screen belongs to a stop that is not on screen', bad.length === 0, bad.join(' | '));
+    rec('at 8 scroll positions no point of the screen belongs to a stop that is not on screen', bad.length === 0, bad.join(' | '));
     await page.context().close();
   }
   // d) Betelgeuse: three taps make the supernova flare, only while the Orion stop is on screen
@@ -183,7 +183,7 @@ async function suiteRings() {
 async function suiteNav() {
   const probe = await fresh('/'); const vh = await VH(probe); await probe.context().close();
   for (const [lab, sel] of [['mark', '#bar a.mark'], ['Home tab', '#bar a[data-tab="home"]']]) {
-    for (const [stop, s] of [['Cloud Chase', 6.85], ['Spell Shore', 8.6], ['Shaft Bound', 10.3], ['contact', 'contact']]) {
+    for (const [stop, s] of [['Cloud Chase', 6.85], ['Spell Shore', 8.6], ['Shaft Bound', 10.3], ['Red Landing', 12.0], ['contact', 'contact']]) {
       const page = await fresh('/');
       if (s === 'contact') { await page.evaluate("document.getElementById('contact').scrollIntoView()"); await page.waitForTimeout(1200); } else await scrollTo(page, Math.round(s * vh));
       const y0 = await sy(page); const samples = [];
@@ -203,7 +203,7 @@ async function suiteNav() {
 
 // 4. The three game pages: every link and button, tapped
 async function suiteGames() {
-  for (const path of ['/cloudchase/', '/spellshore/', '/shaftbound/']) {
+  for (const path of ['/cloudchase/', '/spellshore/', '/shaftbound/', '/redlanding/']) {
     const probe = await fresh(path);
     const list = await probe.evaluate(() => [...document.querySelectorAll('a[href],button')].map((el, i) => ({ i, text: (el.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 40), href: el.getAttribute('href'), where: el.closest('header') ? 'header' : el.closest('footer') ? 'footer' : 'page', hidden: !!(el.hidden || el.closest('[hidden]')) })));
     await probe.context().close();

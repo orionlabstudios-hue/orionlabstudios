@@ -41,10 +41,13 @@
   var GAMES = {
     cc: { name: 'CLOUD CHASE', motto: 'AN ADVENTURE ABOVE THE CLOUDS', col: hexRGB('#9fdcff'), hot: hexRGB('#ffe2c6'), num: 'I', ang: 145 * DEG, r0: 1.10, r1: 1.20, teeth: 0, href: '/cloudchase/' },
     ss: { name: 'SPELL SHORE', motto: 'SPELL. FISH. BUILD. DEFEND.', col: hexRGB('#6ef0d2'), hot: hexRGB('#ffd36a'), num: 'II', ang: 35 * DEG, r0: 1.24, r1: 1.34, teeth: 0, href: '/spellshore/' },
-    sb: { name: 'SHAFT BOUND', motto: 'DIG. DEFEND. GO DEEPER.', col: hexRGB('#ffb35c'), hot: hexRGB('#8cf2ff'), num: 'III', ang: 270 * DEG, r0: 1.38, r1: 1.48, teeth: 120, href: '/shaftbound/' }
+    sb: { name: 'SHAFT BOUND', motto: 'DIG. DEFEND. GO DEEPER.', col: hexRGB('#ffb35c'), hot: hexRGB('#8cf2ff'), num: 'III', ang: 270 * DEG, r0: 1.38, r1: 1.48, teeth: 120, href: '/shaftbound/' },
+    // Red Landing: the ring in the game's moon red, its constellation (a red moon over a plane's tail fin, title look A)
+    // drawn in the game's star colour; colours from the game's own palette
+    rl: { name: 'RED LANDING', motto: 'SURVIVE THE NIGHT UNDER A RED MOON', col: hexRGB('#e2442b'), hot: hexRGB('#f05a3a'), star: [230 / 255, 225 / 255, 215 / 255], num: 'IV', ang: 330 * DEG, r0: 1.53, r1: 1.63, teeth: 0, href: '/redlanding/' }
   };
   var SPEC = [[0.62, 0.72, 1], [0.70, 0.80, 1], [0.88, 0.92, 1], [1, 1, 0.94], [1, 0.93, 0.78], [1, 0.80, 0.58], [1, 0.62, 0.40]];
-  var BADGE_R = 1.88;
+  var BADGE_R = 1.96;   // the medallions sit just outside the fourth ring (was 1.88 with three rings)
 
   /* ------------------------------------------------------------------ the engraving font (our own single-stroke letters on a 4 x 6 grid) */
   var FONT = {
@@ -333,6 +336,13 @@
         { p: flipY([T, [-0.38, -0.68], [-0.62, -0.62], [-0.78, -0.44]]) }, { p: flipY([T, [-0.36, -0.46], [-0.52, -0.32], [-0.58, -0.12]]) }
       ], extra: flipY([T]), hot: flipY([SUN]) };
     }
+    if (key === 'rl') {   // y up: the fuselage's end rising out of the trees, a tall swept fin, its stabiliser, and the moon to the right
+      return { lines: [
+        { p: [[-0.95, -0.70], [-0.48, -0.53], [0.10, -0.33]] },
+        { p: [[-0.48, -0.53], [-0.12, 0.58], [0.12, 0.58], [0.10, -0.33]] },
+        { p: [[-0.30, -0.47], [0.20, -0.80], [0.36, -0.78], [0.02, -0.36]] }
+      ], extra: [], hot: [[0.60, 0.16]], moon: 0.30 };
+    }
     var head = []; for (var i = 0; i < 7; i++) { var t = i / 6 * 2 - 1; head.push([t * 0.86, -0.6 + 0.36 * t * t]); }
     var rot = function (pts) { var c = Math.cos(-0.42), s = Math.sin(-0.42); return flipY(pts).map(function (p) { return [p[0] * c - p[1] * s, p[0] * s + p[1] * c]; }); };
     return { lines: [{ p: rot(head) }, { p: rot([[0, -0.6], [0, -0.2], [0, 0.25], [0, 0.62], [0, 0.9]]) }], extra: [], hot: rot([[0.86, -0.24], [-0.86, -0.24]]) };
@@ -347,11 +357,11 @@
     g.arcText(G.name, 0, 0, 0.236 * S, Math.PI / 2, 0.024 * S, z, PALE, 0.7, false);
     g.arcText('RING ' + G.num, 0, 0, 0.236 * S, -Math.PI / 2, 0.018 * S, z, c, 0.55, true);
     // the constellation: lines draw in, then the stars light, one by one
-    var sh = shapeOf(key), sc = 0.165 * S, seen = {}, order = 0, total = 0;
+    var sh = shapeOf(key), sc = 0.165 * S, seen = {}, order = 0, total = 0, lc = G.star || c;
     sh.lines.forEach(function (ln) { total += ln.p.length - 1 + (ln.closed ? 1 : 0); });
     function star(p, o, hot, big) {
       var k2 = p[0].toFixed(3) + ',' + p[1].toFixed(3); if (seen[k2]) return; seen[k2] = 1;
-      var col = hot ? G.hot : c, sz = (big ? 0.016 : 0.010) * S;
+      var col = hot ? G.hot : lc, sz = (big ? 0.016 : 0.010) * S;
       g.pt(p[0] * sc, p[1] * sc, z, sz, col, 1, o, 0);
       g.pt(p[0] * sc, p[1] * sc, z, sz * 5, col, 0.22, o, 2);
     }
@@ -362,13 +372,18 @@
         var a = pts[i - 1], b = pts[i];
         for (var q = 0; q < 5; q++) {
           var u0 = q / 5, u1 = (q + 1) / 5;
-          g.line((a[0] + (b[0] - a[0]) * u0) * sc, (a[1] + (b[1] - a[1]) * u0) * sc, (a[0] + (b[0] - a[0]) * u1) * sc, (a[1] + (b[1] - a[1]) * u1) * sc, z, c, 0.8, o + 0.85 / total * q / 5);
+          g.line((a[0] + (b[0] - a[0]) * u0) * sc, (a[1] + (b[1] - a[1]) * u0) * sc, (a[0] + (b[0] - a[0]) * u1) * sc, (a[1] + (b[1] - a[1]) * u1) * sc, z, lc, G.star ? 0.55 : 0.8, o + 0.85 / total * q / 5);
         }
         star(a, o, false, i === 1); star(b, o + 0.85 / total, false, i === pts.length - 1);
       }
     });
     sh.extra.forEach(function (p) { star(p, 0.96, false, true); });
     sh.hot.forEach(function (p) { star(p, 0.98, true, true); if (key === 'ss') g.circle(p[0] * sc, p[1] * sc, 0.03 * S, z, G.hot, 0.6, 0.98, 24); });
+    if (sh.moon) sh.hot.forEach(function (p) {   // the red moon: a full disc, its limb darker, a glow that reaches past it
+      var r = sh.moon * sc, mx0 = p[0] * sc, my0 = p[1] * sc;
+      g.circle(mx0, my0, r, z, G.hot, 0.75, 0.98, 48); g.circle(mx0, my0, r * 0.93, z, hexRGB('#c8301f'), 0.45, 0.98, 48);
+      g.pt(mx0, my0, z, r * 2.1, hexRGB('#c8301f'), 0.55, 0.98, 2); g.pt(mx0, my0, z, r * 5, hexRGB('#c8301f'), 0.22, 0.98, 2);
+    });
     if (withBracket) {   // the arm that holds the medallion on its ring (the medallion stays upright; the arm points at the centre)
       var dx = -Math.cos(G.ang), dy = -Math.sin(G.ang), nx = -dy, ny = dx, reach = BADGE_R - G.r1;
       [-0.06, 0.06].forEach(function (off) { g.line(dx * 0.3 + nx * off, dy * 0.3 + ny * off, dx * reach + nx * off * 0.55, dy * reach + ny * off * 0.55, z, B, 0.45); });
@@ -449,8 +464,9 @@
   function part(build, extra) { var g = new Geo(); build(g); var p = extra || {}; p.geo = g; return p; }
 
   if (MODE === 'home') {
-    // back to front: the three game rings, the gear train, the base plate, the sky grid, the star frame, the pointer arm
+    // back to front: the four game rings, the gear train, the base plate, the sky grid, the star frame, the pointer arm
     var GAP = 0.62;
+    layer('rl', -5 * GAP, [part(function (g) { buildRing(g, 'rl'); }, { role: 'band' }), part(function (g) { buildBadge(g, 'rl', 1, true); }, { role: 'badge', cx: BADGE_R * Math.cos(GAMES.rl.ang), cy: BADGE_R * Math.sin(GAMES.rl.ang), rot: GAMES.rl.ang })], { order: 8, rv: 0 });
     layer('sb', -4 * GAP, [part(function (g) { buildRing(g, 'sb'); }, { role: 'band' }), part(function (g) { buildBadge(g, 'sb', 1, true); }, { role: 'badge', cx: BADGE_R * Math.cos(GAMES.sb.ang), cy: BADGE_R * Math.sin(GAMES.sb.ang), rot: GAMES.sb.ang })], { order: 6, rv: 0 });
     layer('ss', -3 * GAP, [part(function (g) { buildRing(g, 'ss'); }, { role: 'band' }), part(function (g) { buildBadge(g, 'ss', 1, true); }, { role: 'badge', cx: BADGE_R * Math.cos(GAMES.ss.ang), cy: BADGE_R * Math.sin(GAMES.ss.ang), rot: GAMES.ss.ang })], { order: 5, rv: 0 });
     layer('cc', -2 * GAP, [part(function (g) { buildRing(g, 'cc'); }, { role: 'band' }), part(function (g) { buildBadge(g, 'cc', 1, true); }, { role: 'badge', cx: BADGE_R * Math.cos(GAMES.cc.ang), cy: BADGE_R * Math.sin(GAMES.cc.ang), rot: GAMES.cc.ang })], { order: 4, rv: 0 });
@@ -528,7 +544,8 @@
   var resizeW = 0;
 
   /* ------------------------------------------------------------------ the scroll timeline (in screens of scroll) */
-  var TRACK = MODE === 'home' ? 13.4 : 0;
+  // home: the Red Landing stop (11.5-12.5) was added after Shaft Bound on 14 Nov, so everything after it moved on by 1.7
+  var TRACK = MODE === 'home' ? 15.1 : 0;
   var portrait = false, KEYS = [];
   function lz(name) { return BYNAME[name] ? BYNAME[name].zx : 0; }
   function badgeXY(key) { var G = GAMES[key]; return [BADGE_R * Math.cos(G.ang), BADGE_R * Math.sin(G.ang)]; }
@@ -575,10 +592,12 @@
       var ex = view(P ? { yaw: -0.95, pitch: 0.42, R: 2.7, wf: 1.0, hf: 0.62, sy: 0.18, t: [0, 0, -0.5] } : { yaw: -1.0, pitch: 0.34, R: 2.65, wf: 0.86, hf: 0.95, sx: 0.05, t: [0, 0, -0.5] });
       var orion = fitRight(view(P ? { yaw: -0.14, pitch: 0.08, R: 0.86, wf: 1.0, hf: 0.5, sy: 0.36, t: [0, 0, lz('frame')] } : { yaw: -0.16, pitch: 0.06, R: 0.88, wf: 0.5, hf: 0.92, sx: 0.42, t: [0, 0, lz('frame')] }));
       var arm = fitRight(view(P ? { yaw: -0.55, pitch: 0.45, R: 1.1, wf: 1, hf: 0.55, sy: 0.3, t: [0, 0, lz('arm')] } : { yaw: -0.55, pitch: 0.4, R: 1.1, wf: 0.58, hf: 0.9, sx: 0.32, t: [0, 0, lz('arm')] }));
-      function badgeView(key, yaw) { var b = badgeXY(key); return fitRight(view(P ? { yaw: yaw, pitch: 0.1, R: 0.34, wf: 1, hf: 0.42, sy: 0.38, t: [b[0], b[1], lz(key)] } : { yaw: yaw, pitch: 0.08, R: 0.34, wf: 0.5, hf: 0.86, sx: 0.36, t: [b[0], b[1], lz(key)] })); }
+      // on a phone, Red Landing's card is the tallest (description and price), so its medallion sits a little higher and smaller
+      function badgeView(key, yaw) { var b = badgeXY(key), tall = key === 'rl'; return fitRight(view(P ? { yaw: yaw, pitch: 0.1, R: 0.34, wf: 1, hf: tall ? 0.35 : 0.42, sy: tall ? 0.46 : 0.38, t: [b[0], b[1], lz(key)] } : { yaw: yaw, pitch: 0.08, R: 0.34, wf: 0.5, hf: 0.86, sx: 0.36, t: [b[0], b[1], lz(key)] })); }
       var close = view(P ? { R: 2.05, wf: 0.98, hf: 0.6, sy: 0.24, pitch: 0.12 } : { R: 2.2, wf: 0.78, hf: 0.88, sy: 0.05, pitch: 0.12 });
       KEYS = [[0, hero], [0.85, hero], [2.9, ex], [3.0, ex], [3.55, orion], [4.75, orion], [5.15, arm], [5.6, arm], [6.3, badgeView('cc', 0.2)], [7.4, badgeView('cc', 0.12)],
-        [8.1, badgeView('ss', -0.2)], [9.1, badgeView('ss', -0.12)], [9.8, badgeView('sb', 0.18)], [10.8, badgeView('sb', 0.1)], [11.9, close], [99, close]];
+        [8.1, badgeView('ss', -0.2)], [9.1, badgeView('ss', -0.12)], [9.8, badgeView('sb', 0.18)], [10.8, badgeView('sb', 0.1)],
+        [11.5, badgeView('rl', -0.18)], [12.5, badgeView('rl', -0.1)], [13.6, close], [99, close]];
     } else {
       var gh = fitBelowBar(fitRight(view(P ? { R: 1.35, wf: 1.0, hf: 0.56, sy: 0.32 } : { R: 1.3, wf: 0.6, hf: 0.9, sx: 0.36 })));
       var gx = view(P ? { yaw: -0.85, pitch: 0.4, R: 1.7, wf: 1.0, hf: 0.7, sy: 0.12 } : { yaw: -0.9, pitch: 0.34, R: 1.7, wf: 0.62, hf: 0.95, sx: 0.32 });
@@ -604,11 +623,11 @@
       if (!GPIN) return sstep(0.5, 1.6, s);
       return sstep(GPIN.g0 - 0.4, GPIN.g0 + (GPIN.g1 - GPIN.g0) * 0.5, s) * (1 - 0.6 * sstep(GPIN.g1, GPIN.g1 + 1.2, s));
     }
-    var k = L.order, open = 0.95 + k * 0.22, shut = 10.95 + (7 - k) * 0.11;
+    var k = L.order, open = 0.95 + Math.min(k, 7.5) * 0.22, shut = 12.65 + (7 - k) * 0.11;
     return sstep(open, open + 0.42, s) * (1 - sstep(shut, shut + 0.4, s));
   }
   // which layer a stop looks at (others dim so it reads clearly)
-  var FOCI = MODE === 'home' ? [['frame', 3.2, 3.55, 4.75, 5.0], ['arm', 4.95, 5.15, 5.6, 5.85], ['cc', 5.85, 6.3, 7.4, 7.7], ['ss', 7.6, 8.1, 9.1, 9.4], ['sb', 9.3, 9.8, 10.8, 11.1]] : [];
+  var FOCI = MODE === 'home' ? [['frame', 3.2, 3.55, 4.75, 5.0], ['arm', 4.95, 5.15, 5.6, 5.85], ['cc', 5.85, 6.3, 7.4, 7.7], ['ss', 7.6, 8.1, 9.1, 9.4], ['sb', 9.3, 9.8, 10.8, 11.1], ['rl', 11.0, 11.5, 12.5, 12.8]] : [];
   function focusOf(s) {
     for (var i = 0; i < FOCI.length; i++) { var f = FOCI[i]; var w = sstep(f[1], f[2], s) * (1 - sstep(f[3], f[4], s)); if (w > 0.001) return { name: f[0], w: w }; }
     return null;
@@ -639,10 +658,11 @@
      ['cc', 155, 'Ring I / Cloud Chase', '{360} divisions * medallion I'],
      ['ss', 25, 'Ring II / Spell Shore', '{360} divisions * medallion II'],
      ['sb', 300, 'Ring III / Shaft Bound', '{120} gear teeth * medallion III'],
+     ['rl', 230, 'Ring IV / Red Landing', '{360} divisions * medallion IV'],
      ['gears', 330, 'Part 05 / Gear train', '3 wheels * {60} / 30 / 20 teeth']
     ].forEach(function (d) {
       var el = mkLabel('lbl', '<b></b><span></span>');
-      var L = BYNAME[d[0]], r = d[0] === 'cc' || d[0] === 'ss' || d[0] === 'sb' ? GAMES[d[0]].r1 : d[0] === 'gears' ? 0.62 : d[0] === 'arm' ? 1.06 : d[0] === 'base' ? 1.075 : 0.86;
+      var L = BYNAME[d[0]], r = GAMES[d[0]] ? GAMES[d[0]].r1 : d[0] === 'gears' ? 0.62 : d[0] === 'arm' ? 1.06 : d[0] === 'base' ? 1.075 : 0.86;
       LEADERS.push({ L: L, el: el, b: el.firstChild, sp: el.lastChild, ang: d[1] * DEG, r: r, t1: d[2], t2: d[3], prog: 0, shown: '', vis: 0 });
     });
     OR_NAMES.forEach(function (n) { NAMES.push({ i: n[0], el: mkLabel('sname', n[1]), side: n[2], vis: -1 }); });
@@ -664,7 +684,7 @@
   /* ------------------------------------------------------------------ state */
   var t0 = performance.now(), last = t0, sv = MODE === 'home' ? scrollY() / Math.max(1, win.innerHeight) : 0, svPrev = sv, velS = 0;
   var tween = null, dive = null, nova = 0, novaT = -99, betClicks = [], flashEl = qs('.astro-flash');
-  var frameSpin = 0, frameTurn = 0, ringSpin = { cc: 0, ss: 0, sb: 0 }, gearSpin = 0, armAng = 0.6, revealed = {}, chimed = {};
+  var frameSpin = 0, frameTurn = 0, ringSpin = { cc: 0, ss: 0, sb: 0, rl: 0 }, gearSpin = 0, armAng = 0.6, revealed = {}, chimed = {};
   var VP = null, PX = 1, camNow = null;
   var hot = [];   // canvas hotspots this frame: {x, y, r, kind, key}
   function stopLive(key) {   // is that stop's card the one on screen right now (lit, not fading, not dimmed by a fly)?
@@ -696,7 +716,7 @@
     if (MODE === 'home') up = sstep(3.0, 3.55, s) * (1 - sstep(4.75, 5.0, s));
     frameSpin = frameTurn * (1 - up);
     gearSpin += dt * 0.12 + v * 2.2;
-    ringSpin.cc += dt * 0.01 + v * 0.6; ringSpin.ss -= dt * 0.008 + v * 0.45; ringSpin.sb += dt * 0.006 + v * 0.35;
+    ringSpin.cc += dt * 0.01 + v * 0.6; ringSpin.ss -= dt * 0.008 + v * 0.45; ringSpin.sb += dt * 0.006 + v * 0.35; ringSpin.rl -= dt * 0.005 + v * 0.3;
     var armTarget = 0.6 + s * 0.35;
     if (MODE === 'home' && ORION_POS.length) {
       var b = ORION_POS[0], want = Math.atan2(b[1], b[0]) + frameSpin;
@@ -802,7 +822,7 @@
 
     // load assembly and the per-layer springs (the tiny overshoot is the "click")
     LAYERS.forEach(function (L, i) {
-      var delay = (MODE === 'home' ? [6, 5, 4, 7, 0, 1, 2, 3][i] : i) * 0.13 + 0.15;
+      var delay = (MODE === 'home' ? [7.5, 6, 5, 4, 7, 0, 1, 2, 3][i] : i) * 0.13 + 0.15;
       var at = time > delay ? 1 : 0;
       for (var k = 0; k < 2; k++) {
         var h = dt / 2;
@@ -822,7 +842,7 @@
     // reveals: the frame's Orion and each medallion ignite at their stops, then stay lit
     if (MODE === 'home') {
       BYNAME.frame.rv = Math.max(BYNAME.frame.rv, sstep(3.4, 4.35, s));
-      ['cc', 'ss', 'sb'].forEach(function (k, i) { var a = [6.0, 7.75, 9.45][i]; BYNAME[k].rv = Math.max(BYNAME[k].rv, sstep(a, a + 0.75, s)); });
+      ['cc', 'ss', 'sb', 'rl'].forEach(function (k, i) { var a = [6.0, 7.75, 9.45, 11.15][i]; BYNAME[k].rv = Math.max(BYNAME[k].rv, sstep(a, a + 0.75, s)); });
     } else {
       BYNAME.badge.rv = Math.max(BYNAME.badge.rv, clamp((time - 1.6) / 2.2, 0, 1));
     }
@@ -833,7 +853,7 @@
     // camera: the scroll path, a slow turn, and a tilt toward the mouse (a drift of its own on phones)
     var c = camAt(s);
     if (dive) { var du = clamp((now - dive.t0) / 900, 0, 1); var dk = easeIO(du); c = { yaw: lerp(c.yaw, 0, dk), pitch: lerp(c.pitch, 0, dk), R: c.R, wf: c.wf, hf: c.hf, sx: c.sx, sy: c.sy, t: [lerp(c.t[0], dive.t[0], dk), lerp(c.t[1], dive.t[1], dk), lerp(c.t[2], dive.t[2], dk)] }; dive.k = dk; if (du >= 1 && !dive.gone) { dive.gone = true; location.href = dive.href; } }
-    var heroW = MODE === 'home' ? 1 - sstep(0.5, 1.2, s) + sstep(11.6, 12.4, s) : 1 - sstep(0.4, 1.0, s) * 0.6;
+    var heroW = MODE === 'home' ? 1 - sstep(0.5, 1.2, s) + sstep(13.3, 14.1, s) : 1 - sstep(0.4, 1.0, s) * 0.6;
     var gx = mx, gy = my;
     if (!usedMouse) { gx = 0.45 * Math.sin(time * 0.11); gy = 0.35 * Math.cos(time * 0.083); }
     smx += (gx - smx) * (1 - Math.exp(-dt * 3)); smy += (gy - smy) * (1 - Math.exp(-dt * 3));
@@ -841,7 +861,7 @@
     setCamera(c, sway + smx * 0.42 * (0.35 + 0.65 * heroW), -smy * 0.3 * (0.35 + 0.65 * heroW) + 0.04 * Math.sin(time * 0.13) * heroW, dive ? dive.k : 0);
 
     // layer alpha: assembled vs apart, the stop's focus, the page end
-    var foc = focusOf(s), endFade = MODE === 'home' ? 1 - 0.72 * sstep(12.5, 13.6, s) : 1 - 0.68 * sstep(GPIN ? GPIN.g1 + 0.4 : 1.6, GPIN ? GPIN.g1 + 1.3 : 2.4, s);
+    var foc = focusOf(s), endFade = MODE === 'home' ? 1 - 0.72 * sstep(14.2, 15.3, s) : 1 - 0.68 * sstep(GPIN ? GPIN.g1 + 0.4 : 1.6, GPIN ? GPIN.g1 + 1.3 : 2.4, s);
     LAYERS.forEach(function (L) {
       var a = lerp(L.aA, L.aX, clamp(L.e, 0, 1));
       if (foc && foc.name !== L.name) a *= 1 - 0.8 * foc.w;
@@ -967,9 +987,9 @@
           READ[0].style.opacity = READ[1].style.opacity = rw.toFixed(3);
         } else if (READ[0].style.opacity !== '0') { READ[0].style.opacity = READ[1].style.opacity = '0'; }
       }
-      // hotspots: the three medallions and Betelgeuse
+      // hotspots: the four medallions and Betelgeuse
       // a ring answers a tap only while ITS stop is the one on screen (not a ring drifting past, or off to the side)
-      ['cc', 'ss', 'sb'].forEach(function (k) {
+      ['cc', 'ss', 'sb', 'rl'].forEach(function (k) {
         var L = BYNAME[k]; if (L.alpha < 0.35 || !stopLive(k)) return;
         var bp = L.parts[1], m = mul(VP, bp.mm), cpt = toScreen(m, 0, 0, 0), ept = toScreen(m, 0.3, 0, 0);
         if (cpt && ept) hot.push({ x: cpt[0], y: cpt[1], r: Math.max(18, Math.hypot(ept[0] - cpt[0], ept[1] - cpt[1])), kind: 'game', key: k });
@@ -1009,7 +1029,7 @@
       var cur = null;
       var contact = doc.getElementById('contact');
       if (contact && contact.getBoundingClientRect().top < CH * 0.6) cur = 'contact';
-      else if (s <= 5.9) cur = 'home'; else if (s > 5.9 && s < 7.75) cur = 'cc'; else if (s >= 7.75 && s < 9.45) cur = 'ss'; else if (s >= 9.45 && s < 11.2) cur = 'sb';
+      else if (s <= 5.9) cur = 'home'; else if (s > 5.9 && s < 7.75) cur = 'cc'; else if (s >= 7.75 && s < 9.45) cur = 'ss'; else if (s >= 9.45 && s < 11.15) cur = 'sb'; else if (s >= 11.15 && s < 12.9) cur = 'rl';
       tabs.forEach(function (t) { var on = t.getAttribute('data-tab') === cur; if (on !== t.classList.contains('on')) { t.classList.toggle('on', on); if (on) { t.setAttribute('aria-current', 'true'); keepTabVisible(t); } else t.removeAttribute('aria-current'); } });
     }
     if (dial) {
@@ -1044,7 +1064,7 @@
   function stopFlight() { if (tween) { tween = null; win.AstroFlightStopped = (win.AstroFlightStopped || 0) + 1; } }
   win.AstroFlying = function () { return !!tween; };   // for the tests: is a flight under way
   ['wheel', 'touchstart', 'keydown', 'pointerdown', 'mousedown'].forEach(function (ev) { win.addEventListener(ev, stopFlight, { capture: true, passive: true }); });
-  var STOPY = { cc: 6.85, ss: 8.6, sb: 10.3 };
+  var STOPY = { cc: 6.85, ss: 8.6, sb: 10.3, rl: 12.0 };
   tabs.concat(qsa('[data-tab-link]')).forEach(function (t) {
     t.addEventListener('click', function (e) {
       var k = t.getAttribute('data-tab') || t.getAttribute('data-tab-link');
@@ -1068,7 +1088,7 @@
   // links from other pages (/#games, /#studio, /#cloudchase ...) land on the right part of the instrument:
   // those sections are pinned, so the browser's own jump cannot reach them
   if (MODE === 'home' && ON) {
-    var HASHY = { games: 6.85, cloudchase: 6.85, spellshore: 8.6, shaftbound: 10.3, studio: 4.2 };
+    var HASHY = { games: 6.85, cloudchase: 6.85, spellshore: 8.6, shaftbound: 10.3, redlanding: 12.0, studio: 4.2 };
     var landHash = function () { var h = (location.hash || '').slice(1); if (HASHY[h] !== undefined) win.scrollTo(0, Math.round(HASHY[h] * VH)); };
     if (HASHY[(location.hash || '').slice(1)] !== undefined) { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; win.requestAnimationFrame(landHash); }
     win.addEventListener('hashchange', landHash);
