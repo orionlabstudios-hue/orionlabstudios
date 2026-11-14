@@ -1,6 +1,21 @@
 # The Orion Astrolabe: new home page and the three game pages
 
-Branch `job/orion-astrolabe`, merged into `next-build`. **Not on `main`, so not live.** It goes live only with King's or Pep's yes.
+Built on branch `job/orion-astrolabe`. **Live on `main` since 13 Nov (Pep's yes).** The phone fixes and the constellation trail (branch `job/astrolabe-phone-fixes`) went to `main` on 14 Nov with King's yes. The site is at orionlabstudio.com.
+
+## Phone fixes and the constellation trail (14 Nov)
+
+Branch `job/astrolabe-phone-fixes`. What changed:
+
+1. **Phone buttons work.** A stop (a card of the home page) is a full-screen layer. The cards of hidden stops were still taking taps, so they covered the buttons of the stop on screen. Now only the card of the stop that is on screen takes taps; the stop layers themselves, their wrappers and every hidden card let taps through (`astro/astro.css`).
+2. **"See our worlds" no longer dives into a game.** A tap may reach the 3D hit-test only when it lands on empty sky. A tap on a card, text, a button area, the header or the footer never does (`isSkyTarget` in `astro/astro.js`). A ring answers a tap only while its own stop is the one on screen, and Betelgeuse only while the Orion stop is on screen (`stopLive`). "See our worlds" flies to the Cloud Chase ring with the same smooth fly as the Cloud Chase tab.
+3. **Home.** The "orion lab studios" mark flies back to the very start on the home page (same fly as the tabs) and opens the home page at the top from the policy pages. A "Home" tab is now the first tab on every page (23 pages). On the game pages and their small pages the top left is the game's own name (it opens that game's page), so there the new Home tab is the way back; I did not replace the game names with the studio mark.
+4. **Medium widths.** Any view that puts the instrument on the right is now fitted into the space that is really left of the text, so it shrinks and moves and never sits behind the hero text (home and the three game pages). Between about 700 and 1100 wide the text column is a little narrower and has a soft dark wash behind it. Below 1000 wide the tabs sit on their own row under the name.
+5. **Phone tab row.** Five tabs (Home, Cloud Chase, Spell Shore, Shaft Bound, Contact). The row scrolls sideways with a fade at whichever edge has more, the last tab scrolls fully clear of the edge, and the active tab scrolls into view. A width bug made the row 40 px too narrow at the right; fixed.
+6. **`story.css` and `story.js` deleted** from the site root (King's yes). Nothing referenced them: the only mention outside `docs/` was a comment inside `story.css` itself.
+7. **The reticle cursor is gone** (element, CSS and JavaScript). The normal system cursor is back everywhere, with the pointing hand on links and buttons as usual, and over a ring that can be opened.
+8. **The constellation trail** (`astro/trail.js`, loaded on every page; computers only). Moving the mouse drops a tiny warm-white star every 60 to 90 px, joined to the one before by a thin faint line; at most 8 stars, each fading in under 2 s with a slight drift; the newest star twinkles once when the mouse stops; over a link, button, tab or a live ring the newest three stars drift toward it and its edge gets a soft gold glow; a click throws 6 to 10 specks of stardust that are gone in about half a second. It is one canvas with `pointer-events:none` at z-index 9, above the page and below every header, so it cannot take a click. It only listens to real mouse events (never touch), does nothing with "reduce motion" on, draws only while something is alive and clears only the part of the canvas it used.
+
+Test results for this round are in "Quality checks" at the end.
 
 ## Changes after review (13 Nov)
 
@@ -150,4 +165,30 @@ Branch `job/orion-astrolabe`, merged into `next-build`. **Not on `main`, so not 
 | Links (re-run 13 Nov) | 497 local links on 23 pages, 0 broken. The checker was proven to catch a broken link and a missing anchor. |
 | Visible text of the 19 policy pages (re-run 13 Nov, against the last commit) | 18 identical. The Legal notice changed by one pure insertion, the star-data credit paragraph, and nothing else. Home page and Cloud Chase page differ only by the edits below. |
 
-`story.css` and `story.js` (the previous design) are no longer used by any page. They were left in the repo rather than deleted, per the repo's rule: ask before deleting.
+`story.css` and `story.js` (the previous design) were deleted on 14 Nov with King's yes, after checking that no page referenced them.
+
+### Checks for the phone fixes and the trail (14 Nov, on the final code)
+
+The scripts are in `tools/` (`touch_test.mjs`, `tabrow_test.mjs`, `trail_test.mjs`). They drive a real browser with real touch taps on an emulated iPhone 13 (390 wide, touch screen) and real mouse moves on a desktop window.
+
+| Check | Result |
+|---|---|
+| The bug reproduced first, on the live site as it was (old code) | The same test FAILED there: the tap point of "See our worlds" was covered by the Shaft Bound stop's `DIV.card`. So the test does catch the bug. |
+| Touch test, Chrome, iPhone 13 emulation | 113 of 113 passed |
+| Touch test, WebKit (the Safari engine), iPhone 13 emulation | 113 of 113 passed |
+| Phone tab row at 390, 360 and 768 wide, Chrome and WebKit | 24 of 24 in each: five tabs with Home first; Home active and fully visible at the start; the last tab ends 20 px clear of the edge (18 px at 360); every tapped tab becomes active and is fully on screen |
+| Constellation trail, 23 pages at 1440 and 1024 wide (Chrome) | 46 of 46: the trail draws, fades to nothing, the click burst appears and is gone; the canvas has `pointer-events:none` at z 9 under each header (z 10, 20 or 50); the cursor is the system one (arrow on the page, hand on links); no reticle; a hovered link gets the gold edge and loses it |
+| Trail: never more than 8 stars | most seen at once: 8 |
+| Trail: touch screen | no canvas, no glow after 12 taps |
+| Trail: reduce motion | no canvas, no glow |
+| Trail: frame time at 1440 x 900 (this PC's display runs above 200 fps) | policy page: 210 fps with the mouse still, 218 fps while drawing the trail (median 4.2 ms both). Home page: 225 fps and 225 fps (median 4.2 ms both) |
+| Links | 544 local links on 23 pages, 0 broken |
+| Visible text against the last commit | every one of the 23 pages differs by one thing only: the word "Home" added to the header's tab row (5 characters each). Nothing else on any policy page changed |
+| Chrome at 1440, 1024, 768 and 390 wide; WebKit at the same four | home, Cloud Chase and a policy page: no console errors or warnings, no sideways scroll |
+| Reduce motion | home at 390 and Cloud Chase at 1024: no errors |
+
+Found while testing, not part of the job:
+
+- **iPhone ring taps.** Safari on an iPhone sends no click at all for a tap on a plain part of the page unless something inside the page listens for clicks there, so a tap on the sky over a ring did nothing in the Safari engine (before this job too). Fixed with a listener on `main`; the rings now open in WebKit as well.
+- **No icon on 12 pages.** The Spell Shore and Shaft Bound pages (the game page and its small pages, 6 each) have no icon link, so the browser asks for `/favicon.ico` and gets a 404. Not changed.
+- **Sound slots.** Turning sound on asks for the four sound files in `astro/sounds/`, which are still empty, so the browser logs four 404s once. Expected until Pep adds the files.
