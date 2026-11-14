@@ -28,6 +28,9 @@
   function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
   function sstep(a, b, v) { var t = clamp((v - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); }
   function easeIO(x) { x = clamp(x, 0, 1); return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }
+  // the camera flights (tabs, "See our worlds", the mark): a gentle start, a long glide and a soft settle
+  // (smootherstep: zero speed and zero acceleration at both ends)
+  function easeFly(x) { x = clamp(x, 0, 1); return x * x * x * (x * (x * 6 - 15) + 10); }
   function lerp(a, b, t) { return a + (b - a) * t; }
   function qs(s, r) { return (r || doc).querySelector(s); }
   function qsa(s, r) { return Array.prototype.slice.call((r || doc).querySelectorAll(s)); }
@@ -825,8 +828,12 @@
     if (doc.hidden) { win.requestAnimationFrame(frame); return; }
     // scroll with a little weight
     if (tween) {
-      var u = clamp((now - tween.t0) / tween.dur, 0, 1), y = lerp(tween.y0, tween.y1, easeIO(u));
-      win.scrollTo(0, y); if (u >= 1) tween = null;
+      // the visitor moved the page some other way (a scrollbar drag): the flight gives way and never pulls back
+      if (tween.last !== undefined && Math.abs(scrollY() - tween.last) > 30) tween = null;
+    }
+    if (tween) {
+      var u = clamp((now - tween.t0) / tween.dur, 0, 1), y = lerp(tween.y0, tween.y1, easeFly(u));
+      win.scrollTo(0, y); tween.last = Math.min(y, Math.max(0, root.scrollHeight - root.clientHeight)); if (u >= 1) tween = null;
     }
     var sT = scrollY() / VH;
     sv += (sT - sv) * (1 - Math.exp(-dt * 7.5));
@@ -1072,8 +1079,13 @@
   function flyTo(y, stop) {
     if (reduce || !ON) { win.scrollTo(0, y); return; }
     var y0 = scrollY(), dist = Math.abs(y - y0) / VH;
-    tween = { y0: y0, y1: y, t0: performance.now(), dur: clamp(700 + dist * 140, 800, 2200), stop: stop };
+    tween = { y0: y0, y1: y, t0: performance.now(), dur: clamp(1300 + dist * 220, 1500, 3200), stop: stop };
   }
+  // never fight the visitor: any wheel, touch, key or press during a flight stops it where it is
+  // (a press on another tab stops this flight, then that tab's click starts its own)
+  function stopFlight() { if (tween) { tween = null; win.AstroFlightStopped = (win.AstroFlightStopped || 0) + 1; } }
+  win.AstroFlying = function () { return !!tween; };   // for the tests: is a flight under way
+  ['wheel', 'touchstart', 'keydown', 'pointerdown', 'mousedown'].forEach(function (ev) { win.addEventListener(ev, stopFlight, { capture: true, passive: true }); });
   var STOPY = { cc: 6.85, ss: 8.6, sb: 10.3 };
   tabs.concat(qsa('[data-tab-link]')).forEach(function (t) {
     t.addEventListener('click', function (e) {

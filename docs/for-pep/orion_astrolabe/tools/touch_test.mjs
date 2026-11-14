@@ -46,7 +46,7 @@ async function suiteSow() {
   const samples = [];
   const t0 = Date.now();
   try { await link.tap({ timeout: 5000 }); } catch (e) { rec('See our worlds: the tap is accepted', false, String(e.message).split('\n').find((l) => /intercepts/.test(l)) || String(e.message).split('\n')[0]); }
-  while (Date.now() - t0 < 4200) { samples.push(await sy(page)); await page.waitForTimeout(90); }
+  while (Date.now() - t0 < 5200) { samples.push(await sy(page)); await page.waitForTimeout(90); }
   const end = samples[samples.length - 1], target = Math.round(6.85 * vh);
   const mid = samples.filter((v) => v > 80 && v < target - 80);
   const path = await page.evaluate('location.pathname');
@@ -85,7 +85,8 @@ async function suiteHome() {
     try {
       const y0 = await sy(page);
       await el.tap({ timeout: 6000 });
-      await page.waitForTimeout(c.dive ? 3200 : 2400);
+      if (c.dive) await page.waitForTimeout(3200);
+      else { await page.waitForTimeout(200); const tw = Date.now(); while (Date.now() - tw < 6000 && await page.evaluate('!!(window.AstroFlying && window.AstroFlying())')) await page.waitForTimeout(100); await page.waitForTimeout(400); }   // wait for the flight itself, not a clock
       const url = new URL(page.url()); const y1 = await sy(page);
       const href = c.href || '';
       if (c.dive) { ok = url.pathname === href; note = 'dived to ' + url.pathname; }
@@ -187,7 +188,7 @@ async function suiteNav() {
       if (s === 'contact') { await page.evaluate("document.getElementById('contact').scrollIntoView()"); await page.waitForTimeout(1200); } else await scrollTo(page, Math.round(s * vh));
       const y0 = await sy(page); const samples = [];
       try { await page.locator(sel).first().tap({ timeout: 5000 }); } catch (e) { rec(lab + ' from ' + stop + ': tap accepted', false, String(e.message).split('\n')[0].slice(0, 120)); await page.context().close(); continue; }
-      const t0 = Date.now(); while (Date.now() - t0 < 4800) { samples.push(await sy(page)); await page.waitForTimeout(90); }
+      const t0 = Date.now(); while (Date.now() - t0 < 5600) { samples.push(await sy(page)); await page.waitForTimeout(90); }
       const end = samples[samples.length - 1], mid = samples.filter((v) => v > 80 && v < y0 - 80);
       rec(lab + ' from ' + stop + ' (scroll ' + y0 + '): flies back to the very start (now ' + end + ') smoothly (' + mid.length + ' in-between frames), still on the home page', end <= 3 && mid.length >= 5 && new URL(page.url()).pathname === '/');
       await page.context().close();

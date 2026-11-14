@@ -2,6 +2,17 @@
 
 Built on branch `job/orion-astrolabe`. **Live on `main` since 13 Nov (Pep's yes).** The phone fixes and the constellation trail (branch `job/astrolabe-phone-fixes`) went to `main` on 14 Nov with King's yes. The site is at orionlabstudio.com.
 
+## Slower camera flights (14 Nov)
+
+Branch `job/slower-flights`. King found the tab and "See our worlds" flights too fast to see the movement.
+
+1. **Longer:** `flyTo()` in `astro/astro.js` now takes `clamp(1300 + distance * 220, 1500, 3200)` ms (distance in screen heights; it was `clamp(700 + distance * 140, 800, 2200)`). "See our worlds" from the top is about 2.8 s (was about 1.66 s); the longest flights are capped at 3.2 s (was 2.2 s).
+2. **Smoother ease:** a gentle start, a long glide and a soft settle (smootherstep: no jolt at either end). It replaces the old ease-in-out cubic, which spent more of its time racing through the middle.
+3. **It never fights the visitor:** a wheel, a touch, a key or a mouse press during a flight stops it where it is. A press on another tab stops this flight, then that tab starts its own. Dragging the scrollbar also stops it.
+4. The star mark and the Home tab use the same flight back to the start. With reduce motion on, everything still jumps at once.
+5. Two small hooks for the tests: `window.AstroFlying()` (is a flight under way) and `window.AstroFlightStopped` (how many flights the visitor stopped).
+6. New test `tools/flight_test.mjs`. `tools/touch_test.mjs` now waits for a flight to finish instead of a fixed 2.4 s.
+
 ## Security headers: Content-Security-Policy and referrer (14 Nov)
 
 Branch `job/csp`. GitHub Pages cannot send headers, so both are `<meta>` tags, first in `<head>` right after the charset (a policy only governs what comes after it).
