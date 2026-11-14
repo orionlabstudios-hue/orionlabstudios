@@ -533,20 +533,41 @@
   function view(o) {   // fill in defaults for a camera key
     return { yaw: o.yaw || 0, pitch: o.pitch || 0, R: o.R || 2.2, wf: o.wf || 0.9, hf: o.hf || 0.9, sx: o.sx || 0, sy: o.sy || 0, t: o.t || [0, 0, 0] };
   }
+  // wide layouts put the instrument on the right and the text on the left. At medium widths (a half-screen window, a
+  // tablet) the two met, so any right-hand view is fitted into the space that is really left of the text: the instrument
+  // shrinks and moves to the middle of that space and can never sit behind the hero text.
+  var textRight = 0;
+  function measureText() {
+    var r = 0;
+    if (MODE === 'home') { var c = qs('.stop[data-stop="hero"] .card'); if (c) r = c.getBoundingClientRect().right; }
+    else qsa('.hero.game h1, .hero.game .lede, .hero.game .sub, .hero.game .eyebrow, .hero.game .pill').forEach(function (el) {
+      var rg = doc.createRange(); rg.selectNodeContents(el); var b = rg.getBoundingClientRect(); if (b.width > 0) r = Math.max(r, b.right);
+    });
+    return r;
+  }
+  function fitRight(o) {
+    if (portrait || !textRight || o.sx < 0.3) return o;
+    var left = textRight + 28, W = CW - 24 - left;
+    if (CW * (0.5 + o.sx / 2 - o.wf / 2) >= left) return o;   // already clear of the text (wide screens are untouched)
+    var wf = Math.max(0.2, Math.min(o.wf, 0.84 * W / CW));   // the glow, plates and arm reach past the ring radius: keep a margin
+    o.wf = wf; o.sx = 2 * (left + W / 2) / CW - 1;
+    return o;
+  }
   function buildKeys() {
     portrait = CW / CH < 0.9;
     var P = portrait;
+    textRight = P ? 0 : measureText();
     if (MODE === 'home') {
-      var hero = view(P ? { R: 2.05, wf: 0.98, hf: 0.56, sy: 0.30 } : { R: 2.2, wf: 0.6, hf: 0.92, sx: 0.36 });
+      var hero = fitRight(view(P ? { R: 2.05, wf: 0.98, hf: 0.56, sy: 0.30 } : { R: 2.2, wf: 0.6, hf: 0.92, sx: 0.36 }));
       var ex = view(P ? { yaw: -0.95, pitch: 0.42, R: 2.7, wf: 1.0, hf: 0.62, sy: 0.18, t: [0, 0, -0.5] } : { yaw: -1.0, pitch: 0.34, R: 2.65, wf: 0.86, hf: 0.95, sx: 0.05, t: [0, 0, -0.5] });
-      var orion = view(P ? { yaw: -0.14, pitch: 0.08, R: 0.86, wf: 1.0, hf: 0.5, sy: 0.36, t: [0, 0, lz('frame')] } : { yaw: -0.16, pitch: 0.06, R: 0.88, wf: 0.5, hf: 0.92, sx: 0.42, t: [0, 0, lz('frame')] });
-      var arm = view(P ? { yaw: -0.55, pitch: 0.45, R: 1.1, wf: 1, hf: 0.55, sy: 0.3, t: [0, 0, lz('arm')] } : { yaw: -0.55, pitch: 0.4, R: 1.1, wf: 0.58, hf: 0.9, sx: 0.32, t: [0, 0, lz('arm')] });
-      function badgeView(key, yaw) { var b = badgeXY(key); return view(P ? { yaw: yaw, pitch: 0.1, R: 0.34, wf: 1, hf: 0.42, sy: 0.38, t: [b[0], b[1], lz(key)] } : { yaw: yaw, pitch: 0.08, R: 0.34, wf: 0.5, hf: 0.86, sx: 0.36, t: [b[0], b[1], lz(key)] }); }
+      var orion = fitRight(view(P ? { yaw: -0.14, pitch: 0.08, R: 0.86, wf: 1.0, hf: 0.5, sy: 0.36, t: [0, 0, lz('frame')] } : { yaw: -0.16, pitch: 0.06, R: 0.88, wf: 0.5, hf: 0.92, sx: 0.42, t: [0, 0, lz('frame')] }));
+      var arm = fitRight(view(P ? { yaw: -0.55, pitch: 0.45, R: 1.1, wf: 1, hf: 0.55, sy: 0.3, t: [0, 0, lz('arm')] } : { yaw: -0.55, pitch: 0.4, R: 1.1, wf: 0.58, hf: 0.9, sx: 0.32, t: [0, 0, lz('arm')] }));
+      function badgeView(key, yaw) { var b = badgeXY(key); return fitRight(view(P ? { yaw: yaw, pitch: 0.1, R: 0.34, wf: 1, hf: 0.42, sy: 0.38, t: [b[0], b[1], lz(key)] } : { yaw: yaw, pitch: 0.08, R: 0.34, wf: 0.5, hf: 0.86, sx: 0.36, t: [b[0], b[1], lz(key)] })); }
       var close = view(P ? { R: 2.05, wf: 0.98, hf: 0.6, sy: 0.24, pitch: 0.12 } : { R: 2.2, wf: 0.78, hf: 0.88, sy: 0.05, pitch: 0.12 });
       KEYS = [[0, hero], [0.85, hero], [2.9, ex], [3.0, ex], [3.55, orion], [4.75, orion], [5.15, arm], [5.6, arm], [6.3, badgeView('cc', 0.2)], [7.4, badgeView('cc', 0.12)],
         [8.1, badgeView('ss', -0.2)], [9.1, badgeView('ss', -0.12)], [9.8, badgeView('sb', 0.18)], [10.8, badgeView('sb', 0.1)], [11.9, close], [99, close]];
     } else {
-      var gh = view(P ? { R: 1.35, wf: 1.0, hf: 0.56, sy: 0.32 } : { R: 1.3, wf: 0.6, hf: 0.9, sx: 0.36 });
+      var gh = fitRight(view(P ? { R: 1.35, wf: 1.0, hf: 0.56, sy: 0.32 } : { R: 1.3, wf: 0.6, hf: 0.9, sx: 0.36 }));
       var gx = view(P ? { yaw: -0.85, pitch: 0.4, R: 1.7, wf: 1.0, hf: 0.7, sy: 0.12 } : { yaw: -0.9, pitch: 0.34, R: 1.7, wf: 0.62, hf: 0.95, sx: 0.32 });
       var gb = view(P ? { yaw: 0.3, pitch: -0.2, R: 1.5, wf: 1, hf: 0.9 } : { yaw: 0.35, pitch: -0.18, R: 1.4, wf: 0.8, hf: 0.95, sx: 0.2 });
       var gp = qs('[data-gpin]'), g0 = 1, g1 = 2;
@@ -629,7 +650,7 @@
     });
   }
 
-  /* ------------------------------------------------------------------ DOM: stops (cards), leader labels, star names, tabs, dial, reticle */
+  /* ------------------------------------------------------------------ DOM: stops (cards), leader labels, star names, tabs, dial */
   var STOPS = qsa('[data-stop]').map(function (el) {
     var w = (el.getAttribute('data-win') || '').split(',').map(Number);
     return { el: el, w: w, key: el.getAttribute('data-stop'), o: -1 };
@@ -686,11 +707,6 @@
   if (tabNav) { tabNav.addEventListener('scroll', tabFade, { passive: true }); win.addEventListener('resize', tabFade, { passive: true }); win.setTimeout(tabFade, 50); }
   var tabs = qsa('[data-tab]');
   var dial = qs('.dial-needle'), dialArc = qs('.dial-arc');
-  var reticle = null;
-  if (ON && finePointer) {
-    reticle = doc.createElement('div'); reticle.className = 'reticle'; reticle.setAttribute('aria-hidden', 'true');
-    reticle.innerHTML = '<i></i><i></i><i></i><i></i><b></b>'; body.appendChild(reticle); root.classList.add('reticle-on');
-  }
 
   /* ------------------------------------------------------------------ state */
   var t0 = performance.now(), last = t0, sv = MODE === 'home' ? scrollY() / Math.max(1, win.innerHeight) : 0, svPrev = sv, velS = 0;
@@ -698,6 +714,18 @@
   var frameSpin = 0, frameTurn = 0, ringSpin = { cc: 0, ss: 0, sb: 0 }, gearSpin = 0, armAng = 0.6, revealed = {}, chimed = {};
   var VP = null, PX = 1, camNow = null;
   var hot = [];   // canvas hotspots this frame: {x, y, r, kind, key}
+  function stopLive(key) {   // is that stop's card the one on screen right now (lit, not fading, not dimmed by a fly)?
+    for (var i = 0; i < STOPS.length; i++) if (STOPS[i].key === key) return STOPS[i].o > 0.5;
+    return false;
+  }
+  // only a tap on empty sky may reach the 3D hit-test: never a card, text, button, header, footer or any other page element
+  function isSkyTarget(el) {
+    if (!el || el.nodeType !== 1) return false;
+    var tg = el.tagName;
+    if (tg === 'HTML' || tg === 'BODY' || tg === 'CANVAS') return true;
+    if (el.closest && el.closest('a,button,input,label,summary,header,footer,nav,.card,.after,.snd,.dial,h1,h2,h3,p,li,span,small,.pill,.chip,.btn')) return false;
+    return !!(el.matches && el.matches('main,.track,.sky,.hero,.gpin,.gstage,.glines,#main'));
+  }
 
   function layerModel(L, p, e) {
     // the layer's z moves from 0 (assembled) to its exploded place; during the load it flies in from in front
@@ -983,12 +1011,13 @@
         } else if (READ[0].style.opacity !== '0') { READ[0].style.opacity = READ[1].style.opacity = '0'; }
       }
       // hotspots: the three medallions and Betelgeuse
+      // a ring answers a tap only while ITS stop is the one on screen (not a ring drifting past, or off to the side)
       ['cc', 'ss', 'sb'].forEach(function (k) {
-        var L = BYNAME[k]; if (L.alpha < 0.35) return;
+        var L = BYNAME[k]; if (L.alpha < 0.35 || !stopLive(k)) return;
         var bp = L.parts[1], m = mul(VP, bp.mm), cpt = toScreen(m, 0, 0, 0), ept = toScreen(m, 0.3, 0, 0);
         if (cpt && ept) hot.push({ x: cpt[0], y: cpt[1], r: Math.max(18, Math.hypot(ept[0] - cpt[0], ept[1] - cpt[1])), kind: 'game', key: k });
       });
-      if (fr.alpha > 0.3) { var bt = ORION_POS[0], bs = toScreen(fm, bt[0], bt[1], 0); if (bs) hot.push({ x: bs[0], y: bs[1], r: 16, kind: 'bet' }); }
+      if (fr.alpha > 0.3 && stopLive('orion')) { var bt = ORION_POS[0], bs = toScreen(fm, bt[0], bt[1], 0); if (bs) hot.push({ x: bs[0], y: bs[1], r: 16, kind: 'bet' }); }
     } else {
       var bl = BYNAME.badge; if (bl.alpha > 0.3) { var m2 = mul(VP, bl.parts[0].mm), c2 = toScreen(m2, 0, 0, 0), e2 = toScreen(m2, 0.9, 0, 0); if (c2 && e2) hot.push({ x: c2[0], y: c2[1], r: Math.hypot(e2[0] - c2[0], e2[1] - c2[1]), kind: 'self' }); }
     }
@@ -998,7 +1027,7 @@
     if (flashEl) { var fo = Math.max(nt < 0.5 && nt >= 0 ? (1 - nt / 0.5) * 0.35 : 0, dive ? dive.k * dive.k : 0); flashEl.style.opacity = fo.toFixed(3); }
   }
 
-  /* ------------------------------------------------------------------ the DOM layer: cards, tabs, dial, reticle */
+  /* ------------------------------------------------------------------ the DOM layer: cards, tabs, dial */
   function domFrame(s, time) {
     STOPS.forEach(function (st) {
       if (st.w.length < 4) return;
@@ -1023,7 +1052,7 @@
       var cur = null;
       var contact = doc.getElementById('contact');
       if (contact && contact.getBoundingClientRect().top < CH * 0.6) cur = 'contact';
-      else if (s > 5.9 && s < 7.75) cur = 'cc'; else if (s >= 7.75 && s < 9.45) cur = 'ss'; else if (s >= 9.45 && s < 11.2) cur = 'sb';
+      else if (s <= 5.9) cur = 'home'; else if (s > 5.9 && s < 7.75) cur = 'cc'; else if (s >= 7.75 && s < 9.45) cur = 'ss'; else if (s >= 9.45 && s < 11.2) cur = 'sb';
       tabs.forEach(function (t) { var on = t.getAttribute('data-tab') === cur; if (on !== t.classList.contains('on')) { t.classList.toggle('on', on); if (on) { t.setAttribute('aria-current', 'true'); keepTabVisible(t); } else t.removeAttribute('aria-current'); } });
     }
     if (dial) {
@@ -1031,20 +1060,15 @@
       dial.setAttribute('transform', 'rotate(' + (pr * 360).toFixed(1) + ' 32 32)');
       if (dialArc) dialArc.setAttribute('stroke-dashoffset', (163.4 * (1 - pr)).toFixed(1));
     }
-    if (reticle) {
-      var tx = ptrX, ty = ptrY, size = 26, snap = false;
-      var el = hoverEl;
-      if (el) { var r = el.getBoundingClientRect(); if (r.width < 260 && r.height < 90) { tx = r.left + r.width / 2; ty = r.top + r.height / 2; size = Math.max(r.height + 14, 30); snap = true; } }
-      var h = hitTest(ptrX, ptrY); if (h) { tx = h.x; ty = h.y; size = Math.min(160, h.r * 2 + 10); snap = true; }
-      retX += (tx - retX) * 0.3; retY += (ty - retY) * 0.3; retS += (size - retS) * 0.25;
-      reticle.style.transform = 'translate3d(' + (retX - retS / 2).toFixed(1) + 'px,' + (retY - retS / 2).toFixed(1) + 'px,0)';
-      reticle.style.width = reticle.style.height = retS.toFixed(1) + 'px';
-      reticle.classList.toggle('snap', snap); reticle.classList.toggle('gone', ptrX < -100);
-      body.style.cursor = h ? 'pointer' : '';
+    if (finePointer) {   // the normal system cursor everywhere; it becomes the pointing hand over a ring that can be opened
+      var hh = skyUnder ? hitTest(ptrX, ptrY) : null, cur = hh ? 'pointer' : '';
+      if (cur !== curNow) { curNow = cur; body.style.cursor = cur; }
     }
   }
-  var retX = -100, retY = -100, retS = 26, hoverEl = null;
-  doc.addEventListener('pointerover', function (e) { hoverEl = e.target.closest ? e.target.closest('a,button,[data-tab],summary') : null; }, { passive: true });
+  var skyUnder = true, curNow = '';
+  doc.addEventListener('pointerover', function (e) { skyUnder = isSkyTarget(e.target); }, { passive: true });
+  // the constellation trail (trail.js) asks whether the mouse is over a ring that is live, to glow it like any other control
+  win.AstroHot = function (x, y, el) { if (!isSkyTarget(el)) return null; var h = hitTest(x, y); return h ? { x: h.x, y: h.y, r: h.r } : null; };
   root.addEventListener('mouseleave', function () { ptrX = -999; }, { passive: true });
 
   function hitTest(x, y) {
@@ -1064,8 +1088,19 @@
       var k = t.getAttribute('data-tab') || t.getAttribute('data-tab-link');
       if (!ON) return;   // without the animation the links simply jump to the section
       e.preventDefault();
-      if (k === 'contact') { var c = doc.getElementById('contact'); var top = 0, el = c; while (el) { top += el.offsetTop; el = el.offsetParent; } flyTo(top - 20, 'contact'); }
+      if (k === 'home') flyTo(0, 'hero');
+      else if (k === 'contact') { var c = doc.getElementById('contact'); var top = 0, el = c; while (el) { top += el.offsetTop; el = el.offsetParent; } flyTo(top - 20, 'contact'); }
       else flyTo(STOPY[k] * VH, k);
+    });
+  });
+  // the "orion lab studios" mark: on the home page it flies back to the very start (the same fly as the tabs);
+  // on every other page it is a plain link to the home page, which opens at the top
+  qsa('a.mark').forEach(function (m) {
+    m.addEventListener('click', function (e) {
+      if (!ON || MODE !== 'home' || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      e.preventDefault();
+      if (location.hash) { try { history.replaceState(null, '', location.pathname + location.search); } catch (x) {} }
+      flyTo(0, 'hero');
     });
   });
   // links from other pages (/#games, /#studio, /#cloudchase ...) land on the right part of the instrument:
@@ -1088,6 +1123,7 @@
     var a = e.target.closest ? e.target.closest('a[data-dive]') : null;
     if (a && MODE === 'home') { e.preventDefault(); startDive(a.getAttribute('data-dive'), a.getAttribute('href')); return; }
     if (e.target.closest && e.target.closest('a,button,input,label,summary')) return;
+    if (!isSkyTarget(e.target)) return;   // a tap on a card, text, header or footer is never a tap on the instrument behind it
     var h = hitTest(e.clientX, e.clientY);
     if (!h) return;
     if (h.kind === 'game') startDive(h.key, GAMES[h.key].href);
@@ -1096,6 +1132,9 @@
       if (betClicks.length >= 3) { betClicks = []; novaT = (now - t0) / 1000; play('nova'); }
     } else if (h.kind === 'self') { BYNAME.badge.flash = 1; play('chime'); }
   });
+  // iOS Safari sends no click at all for a tap on a plain element unless something inside the page (not the document)
+  // listens for clicks there. Without this, a tap on the sky over a ring does nothing on an iPhone.
+  qsa('main').forEach(function (m) { m.addEventListener('click', function () {}); });
   win.addEventListener('pageshow', function (e) { if (e.persisted) { dive = null; if (flashEl) flashEl.style.opacity = '0'; } });
   // keyboard: focusing something inside a stop brings that stop on screen
   doc.addEventListener('focusin', function (e) {

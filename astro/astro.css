@@ -44,10 +44,12 @@ body.astro #sky{position:fixed;left:0;top:0;width:100vw;height:115vh;z-index:-2;
 .tabs a[data-tab="cc"].on{background:#BFE6FF;border-color:#BFE6FF;box-shadow:0 0 22px rgba(159,220,255,.5)}
 .tabs a[data-tab="ss"].on{background:#9DF5DE;border-color:#9DF5DE;box-shadow:0 0 22px rgba(110,240,210,.5)}
 .tabs a[data-tab="sb"].on{background:#FFC98A;border-color:#FFC98A;box-shadow:0 0 22px rgba(255,179,92,.5)}
-@media (max-width:820px){
+@media (max-width:1000px){
   .astro .bar .wrap{flex-wrap:wrap;height:auto;padding-top:12px;padding-bottom:10px;row-gap:10px}
-  .astro .bar nav{position:relative;width:100%;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin:-14px calc(-1 * var(--gutter));padding:14px var(--gutter)}
+  .astro .bar nav{position:relative;width:calc(100% + 2 * var(--gutter));overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin:-14px calc(-1 * var(--gutter));padding:14px 0}
   .astro .bar nav::-webkit-scrollbar{display:none}
+  /* the end padding lives on the list, not the scroller, so the last tab can scroll fully clear of the edge */
+  .astro .bar nav>ul{width:max-content;min-width:100%;padding:0 var(--gutter);box-sizing:border-box}
   .tabs a{font-size:10px;letter-spacing:.14em;padding:8px 12px}
   /* the full name on a phone, a little smaller; the tabs scroll sideways and fade at whichever edge has more */
   .astro .bar .mark{font-size:19px;gap:10px}
@@ -94,8 +96,10 @@ html:not(.astro-on) .stop[data-stop="hero"] .card{background:none;border:0;-webk
 .astro-on .stop{position:fixed;left:0;right:0;top:0;bottom:0;padding:0;display:flex;align-items:center;opacity:0;pointer-events:none;will-change:opacity,transform}
 .astro-on .stop[data-stop="hero"]{opacity:1}
 .astro-on .stop>.wrap{width:100%}
-.astro-on .stop.live{pointer-events:auto}
-.astro-on .stop .card{pointer-events:auto}
+/* taps: a stop is a full-screen fixed layer, so NOTHING on it takes a tap except the card of the stop that is on screen
+   (.live). Cards of hidden stops, the stop boxes and their wrappers let every tap through to what is really visible. */
+.astro-on .stop.live,.astro-on .stop>.wrap{pointer-events:none}
+.astro-on .stop.live .card{pointer-events:auto}
 .astro-on .stop[data-stop="parts"],.astro-on .stop[data-stop="close"]{align-items:flex-end;padding-bottom:clamp(40px,9vh,90px)}
 .astro-on .stop[data-stop="parts"] .card,.astro-on .stop[data-stop="close"] .card{max-width:none;text-align:center;margin:0 auto}
 .astro-on .stop[data-stop="hero"] .card{margin-top:40px}
@@ -148,19 +152,12 @@ html:not(.astro-on) .stop[data-stop="hero"] .card{background:none;border:0;-webk
 @media (max-width:600px){.dial{width:44px;height:44px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom))}.snd{left:12px;bottom:calc(14px + env(safe-area-inset-bottom));padding:7px 11px;font-size:8.5px}}
 .astro-flash{position:fixed;inset:0;z-index:60;pointer-events:none;opacity:0;background:radial-gradient(circle at 50% 45%,rgba(255,170,90,.85),rgba(255,120,60,0) 60%)}
 
-/* ---------- the instrument cursor (computers only) ---------- */
-.reticle{position:fixed;left:0;top:0;width:26px;height:26px;z-index:300;pointer-events:none;border:1px solid rgba(255,214,150,.8);border-radius:50%;
-  transform:translate3d(-100px,-100px,0);transition:border-color .2s,box-shadow .2s,opacity .2s;box-shadow:0 0 8px rgba(255,190,110,.25)}
-.reticle i{position:absolute;background:rgba(255,214,150,.9)}
-.reticle i:nth-child(1),.reticle i:nth-child(2){left:50%;width:1px;height:6px;margin-left:-.5px}
-.reticle i:nth-child(1){top:-4px}.reticle i:nth-child(2){bottom:-4px}
-.reticle i:nth-child(3),.reticle i:nth-child(4){top:50%;height:1px;width:6px;margin-top:-.5px}
-.reticle i:nth-child(3){left:-4px}.reticle i:nth-child(4){right:-4px}
-.reticle b{position:absolute;left:50%;top:50%;width:3px;height:3px;margin:-1.5px 0 0 -1.5px;border-radius:50%;background:var(--brass-2)}
-.reticle.snap{border-color:var(--brass-2);box-shadow:0 0 18px rgba(255,200,120,.55),inset 0 0 10px rgba(255,200,120,.2)}
-.reticle.snap b{opacity:0}
-.reticle.gone{opacity:0}
-.reticle-on,.reticle-on *{cursor:none!important}
+/* ---------- the constellation trail (computers only; drawn by /astro/trail.js) ----------
+   The system cursor is left alone everywhere. The trail is one canvas that takes no clicks, above the page and below the header.
+   A control the mouse is over gets a soft gold edge. */
+#trail{position:fixed;left:0;top:0;width:100vw;height:100vh;z-index:9;pointer-events:none}
+.trail-lit{outline:1px solid rgba(255,214,150,.75);outline-offset:3px;filter:drop-shadow(0 0 7px rgba(255,200,120,.5))}
+@media (prefers-reduced-motion:reduce){#trail{display:none}}
 
 /* ---------- game pages ---------- */
 .astro .sky{background:none!important}
@@ -198,6 +195,23 @@ html:not(.astro-on) .glines{position:relative;display:block;padding:14vh var(--g
 /* ---------- reduce motion ---------- */
 @media (prefers-reduced-motion:reduce){
   .astro .hero .eyebrow,.astro .hero h1,.astro .hero .lede,.astro .hero .sub,.astro .hero .cta,.astro .scrollcue:after,.astro-on .stop .kick,.astro-on .stop h1,.astro-on .stop .lede,.astro-on .stop .row,.astro-on .stop .hint{animation:none}
+}
+/* the page listens for taps on the open sky (the rings), so an iPhone would flash its grey tap box over the whole page: none for the sky, a warm one for real controls */
+.astro main{-webkit-tap-highlight-color:transparent}
+.astro main a,.astro main button{-webkit-tap-highlight-color:rgba(255,214,150,.22)}
+/* medium widths (a half-screen window, a tablet held sideways): a narrower text column leaves the instrument a real space of its own on the right */
+@media (min-aspect-ratio:9/10) and (max-width:1100px){
+  .astro-on .stop .card{max-width:min(440px,46vw)}
+  .astro-on .stop[data-stop="parts"] .card,.astro-on .stop[data-stop="close"] .card{max-width:none}
+  .stop h1{font-size:clamp(52px,9vw,100px)}
+  .stop h2{font-size:clamp(40px,5.6vw,72px)}
+  .astro-on .stop:not([data-stop="parts"]):not([data-stop="close"])::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(90deg,rgba(5,6,10,.82),rgba(5,6,10,.58) 36%,rgba(5,6,10,0) 64%)}
+}
+/* the header of the game pages and their small pages: the five links wrap under the name on a phone instead of running off the edge */
+@media (max-width:560px){
+  .nav .wrap{flex-wrap:wrap;height:auto;padding-top:14px;padding-bottom:8px;row-gap:10px}
+  .nav nav{width:100%}
+  .nav ul{flex-wrap:wrap;gap:8px 16px}
 }
 /* room under the fine print so the fixed sound button and dial never sit on the last line */
 body.astro footer.f .fine{padding-bottom:72px}
