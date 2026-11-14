@@ -26,8 +26,9 @@ for (const [w, h] of [[390, 844], [360, 740], [768, 1024]]) {
   // tap every tab; each must end up fully visible and be the active one once the page has flown there
   for (const name of ['Cloud Chase', 'Spell Shore', 'Shaft Bound', 'Contact', 'Home']) {
     try { await page.locator('.bar nav a', { hasText: new RegExp('^' + name + '$', 'i') }).tap({ timeout: 5000 }); } catch (e) { say(false, w + 'px: tap ' + name + ' failed: ' + String(e.message).split('\n')[0].slice(0, 110)); continue; }
-    await page.waitForTimeout(3200);
-    i = await info(); const t = i.tabs.find((x) => x.t.toLowerCase() === name.toLowerCase());
+    let t = null; const t0 = Date.now();   // wait for the fly to land (the tab lights up), up to 8 s, then let the row settle
+    while (Date.now() - t0 < 8000) { await page.waitForTimeout(250); i = await info(); t = i.tabs.find((x) => x.t.toLowerCase() === name.toLowerCase()); if (t.on && Date.now() - t0 > 1500) break; }
+    await page.waitForTimeout(400); i = await info(); t = i.tabs.find((x) => x.t.toLowerCase() === name.toLowerCase());
     say(t.on && t.l >= 0 && t.r <= w, w + 'px: tapped ' + name + ' -> active ' + t.on + ', on screen ' + t.l + '..' + t.r + ' of ' + w);
   }
   await ctx.close();
