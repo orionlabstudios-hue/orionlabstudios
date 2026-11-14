@@ -17,8 +17,11 @@
 <link rel="preload" href="/fonts/cormorant-garamond-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/studio.css">
 <script>document.documentElement.classList.remove('no-js')</script>
+<link rel="stylesheet" href="/astro/astro.css">
+<link rel="stylesheet" href="/astro/docs.css">
 </head>
-<body>
+<body class="astro astro-doc" data-sky="studio">
+<canvas id="sky" aria-hidden="true"></canvas>
 <a class="skip" href="#main">Skip to content</a>
 <header class="bar" id="bar">
   <div class="wrap">
@@ -140,5 +143,6 @@
   size(); requestAnimationFrame(draw);
 })();
 </script>
+<script src="/astro/sky.js" defer></script>
 </body>
 </html>

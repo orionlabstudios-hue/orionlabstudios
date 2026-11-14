@@ -186,14 +186,20 @@ footer a:hover{color:var(--text)}
 .doc a{border-bottom-color:rgba(92,200,224,.35)}
 .ramp.ss i{background:#5CC8E0}.ramp.ss i:nth-child(3n+2){background:#FFC62E}.ramp.ss i:nth-child(3n){background:#F2E6C8}
 </style>
+<link rel="preload" href="/fonts/Orbitron-Medium-latin.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="stylesheet" href="/astro/astro.css">
+<script>(function(d){try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&window.WebGLRenderingContext)d.classList.add('astro-on')}catch(e){}})(document.documentElement)</script>
 </head>
-<body>
+<body class="astro g-ss" data-astro="game" data-game="ss" data-sky="ss">
+<canvas id="sky" aria-hidden="true"></canvas>
+<canvas id="astro" aria-hidden="true"></canvas>
+<canvas id="astro-hud" aria-hidden="true"></canvas>
+<div id="astro-labels" aria-hidden="true"></div>
+<div class="astro-flash" aria-hidden="true"></div>
 
 <header class="nav"><div class="wrap"><a class="brand" href="../spellshore/">Spell <span>Shore</span></a><nav aria-label="Main"><ul><li><a aria-current="page" class="link" href="../spellshore/">Game</a></li><li><a class="link" href="../spellshore/parents/">Parents</a></li><li><a class="link" href="../spellshore/support/">Support</a></li><li><a class="link" href="../">Studio</a></li></ul></nav></div></header>
 <main>
-<section class="sky hero game"><div aria-hidden="true" class="stars"></div><div aria-hidden="true" class="cloud c1"></div><div aria-hidden="true" class="cloud c2"></div><div aria-hidden="true" class="cloud c3"></div>
-
-<div class="wrap">
+<section class="sky hero game"><div class="wrap">
 <p class="eyebrow">A cozy island adventure by Orion Lab Studios</p>
 <h1>Spell<br/>Shore</h1>
 <p class="lede">Spell. Fish. Build. Defend.</p>
@@ -204,7 +210,15 @@ footer a:hover{color:var(--text)}
       <a class="pill" href="parents/">For parents</a>
     </div>
 </div>
+<div class="scrollcue" aria-hidden="true"></div>
 </section>
+<section class="gpin" data-gpin aria-label="Spell Shore, in three lines">
+  <div class="gstage">
+    <div class="glines"><p class="gline">See a picture. <em>Spell the word.</em></p><p class="gline">Grow your island, <em>sail to new ones.</em></p><p class="gline">Keep the pirates <em>off your beach.</em></p></div>
+    <p class="gkey" aria-hidden="true">Spell Shore</p>
+  </div>
+</section>
+
 <section class="block">
 <div class="wrap">
 <p class="eyebrow">The game</p>
@@ -245,5 +259,8 @@ footer a:hover{color:var(--text)}
 <div aria-hidden="true" class="ramp ss"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
 <footer><div class="wrap"><span>© 2026 Orion Lab Studios LLC, a Wyoming limited liability company</span><nav aria-label="Footer"><a href="../spellshore/parents/">For parents</a><a href="../spellshore/support/">Support</a><a href="../spellshore/privacy/">Privacy</a><a href="../spellshore/delete-data/">Delete data</a><a href="../spellshore/terms/">Terms</a><a href="../">Orion Lab Studios</a></nav></div></footer>
 
+<script src="/astro/stars.js" defer></script>
+<script src="/astro/sky.js" defer></script>
+<script src="/astro/astro.js" defer></script>
 </body>
 </html>

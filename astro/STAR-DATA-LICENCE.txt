@@ -1,0 +1,16 @@
+STAR DATA LICENCE (applies to astro/stars.js only)
+
+astro/stars.js is derived from the HYG Database v4.1 by astronexus:
+  https://github.com/astronexus/HYG-Database  (file hyg/CURRENT/hygdata_v41.csv)
+
+The HYG Database is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0):
+  http://creativecommons.org/licenses/by-sa/4.0/
+
+Changes we made: we kept only the stars of visual magnitude 5.5 or brighter, and only each star's J2000 right ascension,
+declination, magnitude and spectral class, and repacked them into a compact form.
+
+Because it is an adaptation, astro/stars.js is shared under the same licence, CC BY-SA 4.0. You may copy, share and adapt
+that one file, with credit to the HYG Database and a link to the licence, and any adaptation must carry the same licence.
+The file comes with no warranty of any kind.
+
+This licence covers the star data file only. It does not cover the rest of this website.

@@ -1,0 +1,30 @@
+/* Orion Lab Studios - the policy, support and legal pages in the astrolabe style.
+   RESTYLE ONLY: nothing here adds, hides or reorders a word of these pages. The sky behind them is /astro/sky.js,
+   tinted by <body data-sky="cc|ss|sb">; the text sits on a dark glass sheet engraved like the instrument's rim. */
+body.astro-doc{color:#ECE8E0}
+body.astro-doc main{position:relative;z-index:1}
+body.astro-doc .nav,body.astro-doc .bar{z-index:20}
+body.astro-doc .bar{background:linear-gradient(rgba(5,6,10,.78),rgba(5,6,10,0))}
+
+/* the page title: an engraved scale under it, like the degree ring */
+body.astro-doc .doc-head,body.astro-doc .dochead{position:relative}
+body.astro-doc .doc-head .wrap,body.astro-doc .dochead .wrap{position:relative;padding-bottom:30px}
+body.astro-doc .doc-head .wrap::after,body.astro-doc .dochead .wrap::after{content:"";position:absolute;left:var(--gutter,24px);right:var(--gutter,24px);bottom:0;height:10px;
+  background:repeating-linear-gradient(90deg,rgba(233,194,122,.55) 0 1px,transparent 1px 12px) bottom/100% 6px no-repeat,
+             repeating-linear-gradient(90deg,rgba(233,194,122,.8) 0 1px,transparent 1px 60px) bottom/100% 10px no-repeat;
+  border-bottom:1px solid rgba(233,194,122,.35);opacity:.8}
+body.astro-doc .eyebrow{font-family:var(--orb);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--acc)}
+body.astro-doc .doc-head h1,body.astro-doc .dochead h1{text-shadow:0 2px 40px rgba(0,0,0,.6)}
+
+/* the reading sheet */
+body.astro-doc .doc>.wrap{position:relative;background:rgba(7,8,13,.80);border:1px solid rgba(233,194,122,.16);border-radius:20px;
+  padding-top:clamp(18px,4vw,40px);padding-bottom:clamp(24px,5vw,48px);margin-top:28px;
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);box-shadow:0 30px 80px rgba(0,0,0,.45)}
+body.astro-doc .doc>.wrap::before{content:"";position:absolute;inset:6px;border-radius:15px;border:1px dashed rgba(233,194,122,.10);pointer-events:none}
+body.astro-doc .doc h2{position:relative}
+body.astro-doc .doc h2::before{content:"";display:inline-block;width:7px;height:7px;margin:0 12px 0 0;vertical-align:.18em;border:1px solid var(--acc);transform:rotate(45deg);opacity:.85}
+body.astro-doc .doc a{color:var(--acc)}
+body.astro-doc .doc .callout{background:rgba(14,15,22,.85);border-left-color:var(--acc)}
+body.astro-doc footer,body.astro-doc .ramp{position:relative;z-index:1}
+body.astro-doc footer{background:rgba(6,7,11,.86)}
+@media (max-width:600px){body.astro-doc .doc>.wrap{border-radius:14px}}
