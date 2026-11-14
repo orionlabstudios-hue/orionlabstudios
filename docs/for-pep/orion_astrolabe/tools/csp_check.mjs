@@ -89,29 +89,22 @@ await pool(jobs, async ([path, w]) => {
     rec(tag + ' docpage.js loaded 200', page.reqs.some(r => r === '200 ' + BASE + '/astro/docpage.js'));
   }
   if (path === '/' && w === 1440) {
-    const b = await page.$('[data-sound]');
-    // the policy's connect-src, probed directly: a same-site sound slot is fetched (404), an outside address is refused
+    // the policy's connect-src, probed directly: a same-site file is fetched, an outside address is refused
     const probe = await page.evaluate(async () => {
-      const a = await fetch('/astro/sounds/dive.mp3', { cache: 'no-store' }).then(r => r.status, e => 'blocked ' + e);
+      const a = await fetch('/astro/stars.js', { cache: 'no-store' }).then(r => r.status, e => 'blocked ' + e);
       const n0 = window.__csp.length;
       const b = await fetch('https://example.com/x.mp3').then(r => r.status, e => 'blocked');
       await new Promise(r => setTimeout(r, 300));
       return { a, b, v: window.__csp.slice(n0) };
     });
-    rec(tag + ' connect-src: same-site sound slot reachable (404)', probe.a === 404, String(probe.a));
+    rec(tag + ' connect-src: a same-site file is reachable (200)', probe.a === 200, String(probe.a));
     rec(tag + ' connect-src: outside address refused by the policy', probe.b === 'blocked' && probe.v.some(x => /connect-src/.test(x)), JSON.stringify(probe.v));
     await page.evaluate(() => { window.__csp = []; });
     page.cons = page.cons.filter(c => !/example\.com/.test(c));
-    const hasAudio = await page.evaluate('!!(window.AudioContext || window.webkitAudioContext)');
-    if (!hasAudio) console.log('NOTE ' + tag + ' this ' + engine + ' build has no Web Audio, so the Sound button cannot load slots here (same before the policy)');
-    else if (b && await b.isVisible()) {
-      const r0 = page.reqs.length;
-      await b.click(); await page.waitForTimeout(1500);
-      const snd = page.reqs.slice(r0).filter(r => /\/astro\/sounds\//.test(r));
-      rec(tag + ' sound on: 4 sound slots requested and answered by the server (404 until Pep adds files)', snd.length === 4 && snd.every(r => /^404 /.test(r)), snd.join(' | '));
-      rec(tag + ' sound button says Sound on', (await page.textContent('[data-sound] .st')) === 'Sound on');
-    } else rec(tag + ' sound button visible', false);
+    // the site has no sound (King, 14 Nov): no button, nothing asks for /astro/sounds/
+    rec(tag + ' no sound button', (await page.$$('[data-sound], button.snd')).length === 0);
   }
+  rec(tag + ' nothing requests /astro/sounds/', !page.reqs.some(r => /\/astro\/sounds\//.test(r)));
   const v = await page.evaluate('window.__csp');
   const bad = page.cons.filter(isCspMsg);
   rec(tag + ' zero CSP violations', v.length === 0 && bad.length === 0, v.concat(bad).join(' | ').slice(0, 300));
@@ -121,6 +114,7 @@ await pool(jobs, async ([path, w]) => {
   await ctx.close();
 });
 console.log('other console errors/warnings: ' + errs.length); errs.forEach(e => console.log('  ' + e));
+rec('no console errors or warnings on any page (the old four sound 404s are gone)', errs.length === 0, errs.length + ' found');
 console.log(`csp ${engine} ${BASE}: ${pass}/${pass + fail} passed, ${fail} failed`);
 await browser.close();
 process.exit(fail ? 1 : 0);

@@ -194,10 +194,10 @@ async function suiteNav() {
       await page.context().close();
     }
   }
-  // the sound button actually toggles
+  // the site has no sound (King, 14 Nov): no sound button, no audio
   const pg = await fresh('/');
-  const b = pg.locator('button.snd'); const before = await b.getAttribute('aria-pressed');
-  try { await b.tap({ timeout: 4000 }); await pg.waitForTimeout(500); const after = await b.getAttribute('aria-pressed'); rec('Sound button: tap toggles it (' + before + ' -> ' + after + ')', before !== after); } catch (e) { rec('Sound button: tap accepted', false, String(e.message).split('\n')[0].slice(0, 120)); }
+  const gone = await pg.evaluate("({ btn: document.querySelectorAll('[data-sound], button.snd').length, text: /Sound (on|off)/i.test(document.body.innerText) })");
+  rec('No sound button on the home page (removed 14 Nov)', gone.btn === 0 && !gone.text, JSON.stringify(gone));
   await pg.context().close();
 }
 
@@ -235,6 +235,7 @@ try {
   if (suite === 'nav' || suite === 'all') await suiteNav();
   if (suite === 'games' || suite === 'all') await suiteGames();
 } finally { await browser.close(); }
+rec('No console errors and no page errors anywhere in the run', errs.length === 0, errs.length + ' found');
 const bad = results.filter((r) => !r.ok);
 console.log('\n' + engine + ' ' + BASE + ' suite ' + suite + ': ' + (results.length - bad.length) + '/' + results.length + ' passed, ' + bad.length + ' failed');
 bad.forEach((r) => console.log('  FAILED: ' + r.name + ' - ' + r.note));

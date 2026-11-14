@@ -22,7 +22,7 @@ async function fresh(view, reduce) {
     const a = t.replace('clamp(1300 + dist * 220, 1500, 3200)', 'clamp(700 + dist * 140, 800, 2200)').replace(/\['wheel', 'touchstart', 'keydown', 'pointerdown', 'mousedown'\]\.forEach\([^\n]*\n/, '\n');
     if (a === t || a.includes('pointerdown')) throw new Error('mutation did not apply'); return route.fulfill({ response: r, body: a }); });
   page.on('pageerror', (e) => errs.push('PAGEERROR ' + e.message));
-  page.on('console', (m) => { if (m.type() === 'error' && !/sounds\//.test(m.location().url || '')) errs.push(m.text()); });
+  page.on('console', (m) => { if (m.type() === 'error') errs.push(m.text()); });
   await page.goto(BASE + '/', { waitUntil: 'load' }); await page.waitForTimeout(2500);
   return page;
 }
@@ -121,6 +121,7 @@ for (const view of [1440, 390]) {
   }
 }
 console.log('page errors: ' + errs.length); errs.forEach((e) => console.log('  ' + e));
+rec('no console errors and no page errors in the run', errs.length === 0, errs.length + ' found');
 console.log(`flight ${engine} ${BASE}: ${pass}/${pass + fail} passed, ${fail} failed`);
 await browser.close();
 process.exit(fail ? 1 : 0);
