@@ -2,6 +2,15 @@
 
 Built on branch `job/orion-astrolabe`. **Live on `main` since 13 Nov (Pep's yes).** The phone fixes and the constellation trail (branch `job/astrolabe-phone-fixes`) went to `main` on 14 Nov with King's yes. The site is at orionlabstudio.com.
 
+## Sound removed (14 Nov)
+
+Branch `job/no-sound`. King decided the site does not need sound.
+
+1. **Gone:** the "Sound off" button on the home page, its styles in `astro/astro.css`, and all the audio code in `astro/astro.js` (the Web Audio setup, the tones, the four sound slots, and the sound hooks on the ring lock, the chimes, the dive and the supernova). The flashes, the dive and the supernova still happen exactly as before, silently.
+2. **The `/astro/sounds/` folder is deleted** (it only held its README), and its line is gone from `_config.yml`. Nothing on the site refers to it any more.
+3. Nothing else changed: the head scripts and their policy hashes are the same, so the security policy did not need touching.
+4. The browser console is now empty on every page (the four sound 404s were the only messages). The tests now require that: no console errors, no sound button, and nothing asking for `/astro/sounds/`.
+
 ## Slower camera flights (14 Nov)
 
 Branch `job/slower-flights`. King found the tab and "See our worlds" flights too fast to see the movement.
@@ -117,13 +126,7 @@ Test results for this round are in "Quality checks" at the end.
   - a glowing reticle cursor that snaps to clickable things (computers only)
   - a tiny astrolabe dial in the corner showing page progress
   - Easter egg: click Betelgeuse 3 times quickly and it flares like a supernova, then calms down.
-- **Sound** is OFF by default, with a small "Sound off" button. There are four named, empty slots for Pep in `/astro/sounds/`:
-  - `ring-lock.mp3`
-  - `constellation-chime.mp3`
-  - `supernova.mp3`
-  - `dive.mp3`
-
-  `astro/sounds/README.txt` explains them. Until files are dropped in, the page plays tiny tones it makes itself. Nothing is downloaded.
+- **No sound.** There was a "Sound off" button with four empty sound slots in `/astro/sounds/`; King decided the site does not need sound, and all of it was removed on 14 Nov (see "Sound removed" at the top).
 - **Links from other pages** (`/#games`, `/#studio`, `/#cloudchase`, `/#promise`, `/#contact`) land on the right part of the instrument (checked: 4.2, 6.85, 10.3 and 13.4 screens).
 
 **Game pages** (`/cloudchase/`, `/spellshore/`, `/shaftbound/`). Everything on them is kept: every section, every sentence, every link, except the Instagram buttons (see below).
@@ -146,7 +149,7 @@ Test results for this round are in "Quality checks" at the end.
   - Cormorant Garamond
   - Barlow
   - Orbitron
-- No analytics, no trackers, no cookies, and nothing stored in the browser (checked: no cookie, localStorage, sessionStorage or IndexedDB use). The only request the page code makes is for the four sound files on our own site, and only after a visitor switches sound on.
+- No analytics, no trackers, no cookies, and nothing stored in the browser (checked: no cookie, localStorage, sessionStorage or IndexedDB use). The page code makes no network requests of its own (since the sound was removed on 14 Nov).
 - Everything is drawn in code: no AI images, no AI video, no images of any kind on these pages.
 
 ## Star catalogue and its licence
@@ -197,7 +200,7 @@ Test results for this round are in "Quality checks" at the end.
 | **Firefox** | **Not tested.** Firefox cannot run on this PC, so it needs one look on a real computer. |
 | **Real Safari on an iPhone or Mac** | **Not tested** either. WebKit is the same engine but not the same browser. |
 | Reduce motion | A still, finished astrolabe behind the text, normal scrolling, no hint to scroll it apart. |
-| No JavaScript | All content readable in normal order; the sound button and dial are hidden. |
+| No JavaScript | All content readable in normal order; the dial is hidden. |
 | Old or slow phones | Lighter version chosen automatically (low memory or few cores, or `?lite`): 1,100 stars, no bloom, lower sharpness. It also steps down by itself if frames run slow. |
 | Links (re-run 13 Nov) | 497 local links on 23 pages, 0 broken. The checker was proven to catch a broken link and a missing anchor. |
 | Visible text of the 19 policy pages (re-run 13 Nov, against the last commit) | 18 identical. The Legal notice changed by one pure insertion, the star-data credit paragraph, and nothing else. Home page and Cloud Chase page differ only by the edits below. |
@@ -246,4 +249,4 @@ Found while testing, not part of the job:
 
 - **iPhone ring taps.** Safari on an iPhone sends no click at all for a tap on a plain part of the page unless something inside the page listens for clicks there, so a tap on the sky over a ring did nothing in the Safari engine (before this job too). Fixed with a listener on `main`; the rings now open in WebKit as well.
 - **No icon on 12 pages.** The Spell Shore and Shaft Bound pages (the game page and its small pages, 6 each) have no icon link, so the browser asks for `/favicon.ico` and gets a 404. Not changed.
-- **Sound slots.** Turning sound on asks for the four sound files in `astro/sounds/`, which are still empty, so the browser logs four 404s once. Expected until Pep adds the files.
+- **Sound slots** (until 14 Nov): turning sound on asked for four empty sound files and logged four 404s. Gone with the sound.

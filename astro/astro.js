@@ -1,6 +1,5 @@
 /* Orion Lab Studios - THE ORION ASTROLABE.
-   Everything here is drawn in code: no images, no video, no libraries, no cookies, no analytics, no network calls
-   (the only requests are the optional sound files in /astro/sounds/, and only after the visitor turns sound ON).
+   Everything here is drawn in code: no images, no video, no libraries, no cookies, no analytics, no network calls, no sound.
    A small WebGL line renderer draws a brass star instrument in thousands of fine glowing lines, in real 3D.
    The stars on the base plate and in Orion are real: positions from the HYG Database v4.1, CC BY-SA 4.0 (astro/stars.js; see astro/STAR-DATA-LICENCE.txt).
    Scroll takes it apart like an exploded engineering drawing; the game rings carry each game's constellation.
@@ -623,47 +622,6 @@
     usedMouse = true; mx = e.clientX / CW - 0.5; my = e.clientY / CH - 0.5;
   }, { passive: true });
 
-  /* ------------------------------------------------------------------ sound (OFF until the visitor turns it on) */
-  // SOUND SLOTS for Pep: drop files with exactly these names into /astro/sounds/ and they are used instead of the built-in tones.
-  var SLOTS = { lock: '/astro/sounds/ring-lock.mp3', chime: '/astro/sounds/constellation-chime.mp3', nova: '/astro/sounds/supernova.mp3', dive: '/astro/sounds/dive.mp3' };
-  var AC = null, soundOn = false, BUF = {}, lastSound = {};
-  var sbtn = qs('[data-sound]');
-  function loadSlots() {
-    Object.keys(SLOTS).forEach(function (k) {
-      if (BUF[k] !== undefined) return; BUF[k] = null;
-      if (!win.fetch) return;
-      fetch(SLOTS[k], { cache: 'force-cache' }).then(function (r) { if (!r.ok) throw 0; return r.arrayBuffer(); })
-        .then(function (b) { return new Promise(function (res, rej) { AC.decodeAudioData(b, res, rej); }); })
-        .then(function (buf) { BUF[k] = buf; }).catch(function () { BUF[k] = null; });
-    });
-  }
-  function tone(freq, dur, type, vol, slide) {
-    var t = AC.currentTime, o = AC.createOscillator(), g = AC.createGain();
-    o.type = type; o.frequency.setValueAtTime(freq, t); if (slide) o.frequency.exponentialRampToValueAtTime(slide, t + dur);
-    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.004); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t + dur + 0.02);
-  }
-  function play(k) {
-    if (!soundOn || !AC) return;
-    var now = performance.now(); if (lastSound[k] && now - lastSound[k] < 90) return; lastSound[k] = now;
-    if (BUF[k]) { var s = AC.createBufferSource(); s.buffer = BUF[k]; var g = AC.createGain(); g.gain.value = 0.7; s.connect(g); g.connect(AC.destination); s.start(); return; }
-    if (k === 'lock') { tone(2400, 0.035, 'square', 0.035); tone(900, 0.06, 'triangle', 0.05); }
-    else if (k === 'chime') { [880, 1320, 1760].forEach(function (f, i) { setTimeout(function () { if (soundOn) tone(f, 1.1, 'sine', 0.05); }, i * 90); }); }
-    else if (k === 'nova') { tone(220, 1.6, 'sawtooth', 0.04, 55); tone(1760, 1.2, 'sine', 0.04, 440); }
-    else if (k === 'dive') { tone(300, 0.7, 'sine', 0.06, 1200); }
-  }
-  if (sbtn) {
-    sbtn.hidden = !ON;
-    sbtn.addEventListener('click', function () {
-      soundOn = !soundOn;
-      if (soundOn && !AC) { var C = win.AudioContext || win.webkitAudioContext; if (C) { AC = new C(); loadSlots(); } }
-      if (AC && AC.state === 'suspended') AC.resume();
-      sbtn.setAttribute('aria-pressed', soundOn ? 'true' : 'false');
-      sbtn.querySelector('.st').textContent = soundOn ? 'Sound on' : 'Sound off';
-      if (soundOn) play('lock');
-    });
-  }
-
   /* ------------------------------------------------------------------ DOM: stops (cards), leader labels, star names, tabs, dial */
   var STOPS = qsa('[data-stop]').map(function (el) {
     var w = (el.getAttribute('data-win') || '').split(',').map(Number);
@@ -718,7 +676,7 @@
     if (!el || el.nodeType !== 1) return false;
     var tg = el.tagName;
     if (tg === 'HTML' || tg === 'BODY' || tg === 'CANVAS') return true;
-    if (el.closest && el.closest('a,button,input,label,summary,header,footer,nav,.card,.after,.snd,.dial,h1,h2,h3,p,li,span,small,.pill,.chip,.btn')) return false;
+    if (el.closest && el.closest('a,button,input,label,summary,header,footer,nav,.card,.after,.dial,h1,h2,h3,p,li,span,small,.pill,.chip,.btn')) return false;
     return !!(el.matches && el.matches('main,.track,.sky,.hero,.gpin,.gstage,.glines,#main'));
   }
 
@@ -852,11 +810,11 @@
         L.ev += ((L.et - L.e) * 95 - L.ev * 10.5) * h; L.e += L.ev * h;
       }
       L.et = explodeTarget(L, s);
-      if (!L.alock && at && Math.abs(1 - L.asm) < 0.02 && Math.abs(L.av) < 0.3) { L.alock = true; L.flash = 1; play('lock'); }
+      if (!L.alock && at && Math.abs(1 - L.asm) < 0.02 && Math.abs(L.av) < 0.3) { L.alock = true; L.flash = 1; }
       // a part that has moved and settled at an end clicks into place (once per move)
       var end = L.et > 0.99 ? 1 : L.et < 0.01 ? 0 : -1;
       if (end >= 0 && L.alock && Math.abs(L.e - end) < 0.015 && Math.abs(L.ev) < 0.08 && L.lastLock !== end) {
-        L.lastLock = end; L.flash = Math.max(L.flash, 0.8); play('lock');
+        L.lastLock = end; L.flash = Math.max(L.flash, 0.8);
       }
       L.flash *= Math.exp(-dt * 4);
     });
@@ -868,7 +826,7 @@
     } else {
       BYNAME.badge.rv = Math.max(BYNAME.badge.rv, clamp((time - 1.6) / 2.2, 0, 1));
     }
-    LAYERS.forEach(function (L) { if (L.rv >= 0.999 && !chimed[L.name] && (L.name === 'frame' || GAMES[L.name] || L.name === 'badge')) { chimed[L.name] = 1; L.flash = Math.max(L.flash, 0.6); play('chime'); } });
+    LAYERS.forEach(function (L) { if (L.rv >= 0.999 && !chimed[L.name] && (L.name === 'frame' || GAMES[L.name] || L.name === 'badge')) { chimed[L.name] = 1; L.flash = Math.max(L.flash, 0.6); } });
 
     computeSpins(dt, s, time);
 
@@ -1120,7 +1078,6 @@
     var L = BYNAME[key], bp = L.parts[1], b = badgeXY(key);
     dive = { t0: performance.now(), href: href, k: 0, t: [b[0], b[1], bp.mm ? bp.mm[14] : L.zx] };
     if (flashEl) { flashEl.style.background = 'radial-gradient(circle at 50% 50%, rgba(' + GAMES[key].col.map(function (v) { return Math.round(v * 255); }).join(',') + ',0.9), rgba(5,6,10,1) 70%)'; }
-    play('dive');
   }
   doc.addEventListener('click', function (e) {
     if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
@@ -1133,8 +1090,8 @@
     if (h.kind === 'game') startDive(h.key, GAMES[h.key].href);
     else if (h.kind === 'bet') {
       var now = performance.now(); betClicks = betClicks.filter(function (t) { return now - t < 1600; }); betClicks.push(now);
-      if (betClicks.length >= 3) { betClicks = []; novaT = (now - t0) / 1000; play('nova'); }
-    } else if (h.kind === 'self') { BYNAME.badge.flash = 1; play('chime'); }
+      if (betClicks.length >= 3) { betClicks = []; novaT = (now - t0) / 1000; }
+    } else if (h.kind === 'self') { BYNAME.badge.flash = 1; }
   });
   // iOS Safari sends no click at all for a tap on a plain element unless something inside the page (not the document)
   // listens for clicks there. Without this, a tap on the sky over a ring does nothing on an iPhone.
