@@ -2,6 +2,18 @@
 
 Built on branch `job/orion-astrolabe`. **Live on `main` since 13 Nov (Pep's yes).** The phone fixes and the constellation trail (branch `job/astrolabe-phone-fixes`) went to `main` on 14 Nov with King's yes. The site is at orionlabstudio.com.
 
+## Security headers: Content-Security-Policy and referrer (14 Nov)
+
+Branch `job/csp`. GitHub Pages cannot send headers, so both are `<meta>` tags, first in `<head>` right after the charset (a policy only governs what comes after it).
+
+1. **The policy, on all 23 pages:** `default-src 'self'; script-src 'self' [hash]; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'`.
+2. **Inline scripts:** there were four kinds. The three tiny ones in the head (they must run before the page draws, to pick the layout) stay inline and are allowed by their SHA-256 hash, each page listing only its own. The long one at the bottom of the four studio pages (privacy, terms, legal, accessibility) moved unchanged into `astro/docpage.js`. There are no `onclick=`-style handlers and no `javascript:` links.
+3. **If you edit a head script, its hash must change too**, or the browser blocks it (the page then stays in its no-script layout and the console says "Refused to execute inline script"). Recompute with: `python -c "import hashlib,base64,sys;print(base64.b64encode(hashlib.sha256(sys.argv[1].encode()).digest()).decode())" "<the exact text between the script tags>"`. `tools/csp_check.mjs` catches it on every page.
+4. **Why `style-src` keeps `'unsafe-inline'`:** the game pages and their small pages carry their whole stylesheet in a `<style>` block, and most pages have `style="..."` attributes. Moving those out is a bigger change than this job; scripts are the part that matters for attacks.
+5. **`<meta name="referrer" content="strict-origin-when-cross-origin">`** added to the 18 pages that did not have it.
+6. `frame-ancestors` (stopping other sites framing ours) cannot be set from a meta tag; it needs a real header, which GitHub Pages does not offer.
+7. Found while doing this, not changed: `astro/docpage.js` (the old studio-page script) and `astro/sky.js` both draw stars on the same `#sky` canvas on those four pages, and both turn the bar solid. It looks fine, but one of them is left over.
+
 ## The same top bar on every page (14 Nov)
 
 Branch `job/same-top-bar`. What changed:
