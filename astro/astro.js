@@ -44,7 +44,7 @@
     sb: { name: 'SHAFT BOUND', motto: 'DIG. DEFEND. GO DEEPER.', col: hexRGB('#ffb35c'), hot: hexRGB('#8cf2ff'), num: 'III', ang: 270 * DEG, r0: 1.38, r1: 1.48, teeth: 120, href: '/shaftbound/' },
     // Red Landing: the ring in the game's moon red, its constellation (a red moon over a plane's tail fin, title look A)
     // drawn in the game's star colour; colours from the game's own palette
-    rl: { name: 'RED LANDING', motto: 'SURVIVE THE NIGHT UNDER A RED MOON', col: hexRGB('#e2442b'), hot: hexRGB('#f05a3a'), star: [230 / 255, 225 / 255, 215 / 255], num: 'IV', ang: 330 * DEG, r0: 1.53, r1: 1.63, teeth: 0, href: '/redlanding/' }
+    rl: { name: 'RED LANDING', motto: 'SHE WALKED INTO THE DARK. YOU\'RE GOING AFTER HER.', col: hexRGB('#e2442b'), hot: hexRGB('#f05a3a'), star: [230 / 255, 225 / 255, 215 / 255], num: 'IV', ang: 330 * DEG, r0: 1.53, r1: 1.63, teeth: 0, href: '/redlanding/' }
   };
   var SPEC = [[0.62, 0.72, 1], [0.70, 0.80, 1], [0.88, 0.92, 1], [1, 1, 0.94], [1, 0.93, 0.78], [1, 0.80, 0.58], [1, 0.62, 0.40]];
   var BADGE_R = 1.96;   // the medallions sit just outside the fourth ring (was 1.88 with three rings)

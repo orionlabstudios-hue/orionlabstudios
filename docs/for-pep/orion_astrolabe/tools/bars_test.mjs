@@ -13,8 +13,9 @@ const SUBPATH = { 'Game': '', 'For parents': 'parents/', 'Support': 'support/', 
 const PAGES = ['/', '/cloudchase/', '/spellshore/', '/shaftbound/', '/cloudchase/privacy/', '/cloudchase/terms/', '/cloudchase/support/', '/cloudchase/delete-data/', '/spellshore/privacy/', '/spellshore/terms/', '/spellshore/support/', '/spellshore/delete-data/', '/spellshore/parents/', '/shaftbound/privacy/', '/shaftbound/terms/', '/shaftbound/support/', '/shaftbound/delete-data/', '/shaftbound/parents/', '/redlanding/', '/redlanding/privacy/', '/redlanding/terms/', '/redlanding/support/', '/redlanding/delete-data/', '/legal/', '/privacy/', '/terms/', '/accessibility/', '/404.html'];
 if (process.env.ONLY) { const keep = process.env.ONLY.split(','); for (let i = PAGES.length - 1; i >= 0; i--) if (!keep.includes(PAGES[i])) PAGES.splice(i, 1); }
 const TABS = ['Home', 'Cloud Chase', 'Spell Shore', 'Shaft Bound', 'Red Landing', 'Contact'];
-// kids and parents pages never show Red Landing (King, 14 Nov): every Spell Shore page and both parents pages
-const KIDS = (path) => path.startsWith('/spellshore/') || /\/parents\/$/.test(path);
+// kids and parents pages never show Red Landing (King, 14 Nov): every Spell Shore page, every Shaft Bound page
+// (Shaft Bound is played by kids; Red Landing is 13+ horror) and both parents pages
+const KIDS = (path) => path.startsWith('/spellshore/') || path.startsWith('/shaftbound/') || /\/parents\/$/.test(path);
 const tabsFor = (path) => KIDS(path) ? TABS.filter((t) => t !== 'Red Landing') : TABS;
 const TABHREF = { 'Home': '/', 'Cloud Chase': '/cloudchase/', 'Spell Shore': '/spellshore/', 'Shaft Bound': '/shaftbound/', 'Red Landing': '/redlanding/', 'Contact': '/#contact' };
 let pass = 0, fail = 0; const errs = [];
