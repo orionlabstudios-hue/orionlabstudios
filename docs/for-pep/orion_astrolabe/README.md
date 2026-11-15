@@ -15,6 +15,18 @@ Branch `job/red-landing`. Facts from `C:\CC\_reports\redlanding-facts.md` (writt
 7. **Wrong Voice:** the old page was never on `main` or the live site; it exists only on the unmerged branch `task/wrong-voice-page`. No "Wrong Voice" or "Red Moon" game name is anywhere on the site.
 8. **The leftover star script is gone:** `astro/docpage.js` (the four studio pages drew their background stars twice) is deleted; the pages look identical because `sky.js` was drawing over it.
 
+## Red Landing facts fixed (14 Nov, evening)
+
+Branch `job/rl-facts`, King's yes to put it live. The pages had gone live with an older facts file. Only the 21:12 version of `C:\CC\_reports\redlanding-facts.md` and `C:\CC\_reports\STUDIO-FACTS.md` were used.
+
+1. **New tagline everywhere:** "She walked into the dark. You're going after her." (home stop, `/redlanding/` hero and meta description, the support page, and the Ring IV motto on the astrolabe). The new description from the facts file is on the home stop and in the game page's story block.
+2. **Every false-voice line is gone** (it is no longer in the story): the "Not every voice is who it sounds like" sentence and third pinned line, the "A false voice" item in the age guidance, and the "04 Listen carefully" card. Its place in the grid is now "04 Follow her trail" (Eva's footprints, from the new description), so the grid still has six cards, numbered 01-06. The genre tag is now "Survival horror" (the facts file's genre) instead of "Horror adventure".
+3. **Studio legal pages** (website privacy, website terms, legal notice) now list Red Landing's privacy policy and terms; the legal notice also lists its delete-your-data page. The trademark line (home footer, the four studio pages' footers, the legal notice and the website terms) now names Red Landing. The four studio pages' footers have the Red Landing column the home footer already had. "Last updated" on those three pages is 14 November 2026.
+4. **Shaft Bound pages no longer show the Red Landing tab** (Shaft Bound is played by kids; Red Landing is 13+ horror). The bar test now treats every Shaft Bound page like the Spell Shore pages: no Red Landing tab, no Red Landing text or link anywhere.
+5. **The branch `task/wrong-voice-page` is deleted** (local and on GitHub), with King's yes.
+
+Item 6 of "Red Landing added" above (studio legal pages list three games) and item 3 (Shaft Bound pages show the tab) are superseded by this section.
+
 ## Sound removed (14 Nov)
 
 Branch `job/no-sound`. King decided the site does not need sound.
